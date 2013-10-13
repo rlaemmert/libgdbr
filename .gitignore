@@ -1,0 +1,7 @@
+# Compiled source
+*.o
+.clang_complete
+.cproject
+.project
+.settings/
+

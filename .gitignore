@@ -1,5 +1,6 @@
 # Compiled source
 *.o
+*.so
 .clang_complete
 .cproject
 .project

@@ -6,3 +6,5 @@
 .project
 .settings/
 
+test/client
+test/unit

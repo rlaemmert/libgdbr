@@ -10,8 +10,8 @@ int main()
 		printf("Error connecting to target\n");
 		return 0;
 	}
-	libgdbc_regread(&instance);
-	libgdbc_continue(&instance);
+	libgdbc_regread(&con);
+	libgdbc_continue(&con);
 	libgdbc_delete_instance(&con);	
 	return 0;
 }

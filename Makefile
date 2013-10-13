@@ -53,10 +53,8 @@ client: lib
 	$(CC) $(CFLAGS) $(INCLUDES) -c $(CLIENT) -o $(TEST_D)/client.o
 	$(LD) $(TEST_D)/client.o -o $(TEST_D)/client -L$(LIB) -lgdbc
 
-run_test: lib $(TEST_O)
-	$(LD) $(TEST_O) -o $(TEST_D)/test_client -L$(LIB) -lgdbc
-	LD_LIBRARY_PATH=./lib ./test/test_client localhost 1234
+run_test: client
+	LD_LIBRARY_PATH=./lib ./test/client
 
-gdb_test: lib $(TEST_O)
-	$(LD) $(TEST_O) -o $(TEST_D)/test_client -L$(LIB) -lgdbc
-	LD_LIBRARY_PATH=./lib gdb ./test/test_client
+gdb_test: client
+	LD_LIBRARY_PATH=./lib gdb ./test/client

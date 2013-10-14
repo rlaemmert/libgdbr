@@ -21,5 +21,9 @@ uint8_t libgdbc_cmd_checksum(const char* command);
 int libgdbc_send_command(libgdbc_t* instance, char* command);
 int libgdbc_send_packet(libgdbc_t* instance);
 int libgdbc_read_packet(libgdbc_t* instance);
+// TODO decide if another package is needet
+int hex2int(int ch);
+uint64_t unpack_uint64 (char *buff, int len);
+uint64_t unpack_uint64_co (char* buff, int len);
 
 #endif

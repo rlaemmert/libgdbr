@@ -24,7 +24,7 @@ int libgdbc_create_instance(libgdbc_t* instance)
 int libgdbc_delete_instance(libgdbc_t* instance)
 {
 	int i;
-	for(i = 0; i < instance->message_stack.top; i++)
+	for (i = 0 ; i < instance->message_stack.top ; i++)
 	{
 		free(instance->message_stack.message_stack[i].msg);
 	}
@@ -48,7 +48,7 @@ int libgdbc_connect(libgdbc_t* instance, const char* host, int port)
 	struct sockaddr_in	socketaddr;
 	
 	protocol = getprotobyname("tcp");
-	if(!protocol)
+	if (!protocol)
 	{
 		printf("Error prot\n");
 		//TODO Error here
@@ -56,18 +56,18 @@ int libgdbc_connect(libgdbc_t* instance, const char* host, int port)
 	}
 
 	fd = socket( PF_INET, SOCK_STREAM, protocol->p_proto);
-	if( fd == -1)
+	if (fd == -1)
 	{
 		printf("Error sock\n");
 		//TODO Error here
 		return -1;
 	}
-	memset( &socketaddr, 0, sizeof(socketaddr));
+	memset(&socketaddr, 0, sizeof(socketaddr));
 	socketaddr.sin_family = AF_INET;
 	socketaddr.sin_port = htons(port);
 	hostaddr = gethostbyname(host);
 
-	if(!hostaddr)
+	if (!hostaddr)
 	{
 		printf("Error host\n");
 		//TODO Error here
@@ -75,7 +75,7 @@ int libgdbc_connect(libgdbc_t* instance, const char* host, int port)
 	}
 	
 	connected = connect(fd, (struct sockaddr *) &socketaddr, sizeof(socketaddr));
-	if(connected == -1)
+	if (connected == -1)
 	{
 		printf("error conn\n");
 		//TODO Error here
@@ -106,22 +106,13 @@ int libgdbc_regread(libgdbc_t* instance)
 	
 	int i = 0;
 	printf("Len: %i\n", msg->len);
-	for(i=0;i<msg->len;i = i + 16)
+	for (i = 0;i<msg->len;i = i + 16)
 	{
-		char current[17];
-		char result[17];
-
+		uint8_t current[17];
 		memcpy(current, msg->msg + i, 16);
-		int a;
-		for(a=0;a<16;a+=2)
-		{
-			result[15-a] = current[a];
-		}
-		result[16] = '\0';
 		current[16] = '\0';
-		printf("%s\n", current);
-		uint64_t result_val = strtoull(result, &result[15], 16);
-		//printf("register[%i]:  %016llx\n", i/16, result_val);
+		uint64_t current_val = unpack_uint64_co (current, 16);
+		printf("0x%016llx\n", current_val);
 	}	
 	return 0;
 }

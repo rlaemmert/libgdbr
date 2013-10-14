@@ -10,15 +10,15 @@ char get_next_token(parsing_object_t* current)
 
 void handle_escape(parsing_object_t* current)
 {
-	if(current->position >= current->length) return;
+	if (current->position >= current->length) return;
 	char token = get_next_token(current);
-	if		(token == '}') handle_data(current);
+	if (token == '}') handle_data(current);
 	else handle_escape(current);
 }
 
 void handle_chk(parsing_object_t* current)
 {
-	if(current->position >= current->length) return;
+	if (current->position >= current->length) return;
 	char checksum[2];
 	checksum[0] = get_next_token(current);
 	checksum[1] = get_next_token(current);
@@ -29,9 +29,9 @@ void handle_chk(parsing_object_t* current)
 
 void handle_data(parsing_object_t* current)
 {
-	if(current->position >= current->length) return;
+	if (current->position >= current->length) return;
 	char token = get_next_token(current);
-	if		(token == '#')
+	if (token == '#')
 	{
 		printf("End\n");
 		current->end = current->position - 1; // subtract 2 cause of # itself and the incremented position after getNextToken

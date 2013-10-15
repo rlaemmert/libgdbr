@@ -4,6 +4,6 @@
  * with # and a final checksum
  * $<command>#<checksum>
  */
-static char* libgdbc_continue_cmd				= "c";
-static char* libgdbc_read_registers_cmd	= "g";
+#define CMD_CONTINUE "c"
+#define CMD_READREG  "g"
 

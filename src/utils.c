@@ -5,18 +5,15 @@
 /**
  * This function creates the checksum
  * for the given command
- * command : is used to calculate the checksum
+ * command : is used to calculate the checksum needs to be null terminated
  */
 uint8_t libgdbc_cmd_checksum(const char* command) {
-	int i, len;
 	uint8_t sum = 0;
-	len = strlen(command);
-	for (i = 0;i < len;i++) {
-			sum += command[i];	
+	while(*command != '\0') {
+		sum += *command++;	
 	}
 	return sum;
 }
-
 
 /**
  * This function sends the given command to the gdb server
@@ -54,10 +51,10 @@ int libgdbc_send_packet(libgdbc_t* instance) {
 	libgdbc_read_packet(instance);
 	if (instance->acks > acks) {
 		instance->acks--;
-		return TRUE;
+		return 1;
 	}
 	printf("FALSE!!!!!!!\n");
-	return FALSE;
+	return 0;
 }
 
 

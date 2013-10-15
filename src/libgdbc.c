@@ -12,7 +12,7 @@ int libgdbc_create_instance(libgdbc_t* instance) {
 	instance->max_send_len = 2500;
 	instance->read_buff = (char*) malloc(2500);
 	instance->max_read_len = 2500;
-	instance->connected = FALSE;
+	instance->connected = 0;
 	return 0; 
 }
 
@@ -95,7 +95,7 @@ int libgdbc_disconnect(libgdbc_t* instance) {
 
 
 int libgdbc_regread(libgdbc_t* instance) {
-	libgdbc_send_command(instance, libgdbc_read_registers_cmd);
+	libgdbc_send_command(instance, CMD_READREG);
 	libgdbc_message_t* msg = &instance->message_stack.message_stack[instance->message_stack.top-1];
 	printf("Msg: %s\n", msg->msg);
 	
@@ -113,5 +113,5 @@ int libgdbc_regread(libgdbc_t* instance) {
 
 
 int libgdbc_continue(libgdbc_t* instance) {
-	return libgdbc_send_command(instance, libgdbc_continue_cmd);
+	return libgdbc_send_command(instance, CMD_CONTINUE);
 }

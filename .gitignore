@@ -8,3 +8,6 @@
 
 test/client
 test/unit
+test.c
+.test.c.swp
+a.out

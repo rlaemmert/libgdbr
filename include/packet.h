@@ -1,8 +1,9 @@
 #ifndef PACKET_H
 #define PACKET_H
 
-#include "libgdbc.h"
-
+#include "core.h"
+#include <stdint.h>
+#include <unistd.h>
 
 typedef struct parsing_object_t
 {
@@ -16,7 +17,7 @@ typedef struct parsing_object_t
 } parsing_object_t;
 
 
-int libgdbc_parse_packet(libgdbc_t* instance);
+int parse_packet(libgdbc_t* instance);
 void handle_data(parsing_object_t* current);
 void handle_chk(parsing_object_t* current);
 void handle_packet(parsing_object_t* current);

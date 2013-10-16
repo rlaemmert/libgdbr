@@ -1,9 +1,7 @@
 #include "packet.h"
-#include <stdio.h>
 
 
 char get_next_token(parsing_object_t* current) {
-	printf("%c ", current->buffer[current->position]);
 	return current->buffer[current->position++];
 }
 
@@ -22,8 +20,7 @@ void handle_chk(parsing_object_t* current) {
 	checksum[0] = get_next_token(current);
 	checksum[1] = get_next_token(current);
 	checksum[2] = '\0';
-	current->checksum = (uint8_t) strtol(checksum, &checksum[1], 16);
-	printf("Checksum: %x\n", current->checksum);
+	current->checksum = (uint8_t) strtol(checksum, NULL, 16);
 }
 
 
@@ -31,7 +28,6 @@ void handle_data(parsing_object_t* current) {
 	if (current->position >= current->length) return;
 	char token = get_next_token(current);
 	if (token == '#') {
-		printf("End\n");
 		current->end = current->position - 1; // subtract 2 cause of # itself and the incremented position after getNextToken
 		handle_chk(current);
 	}
@@ -45,12 +41,11 @@ void handle_packet(parsing_object_t* current) {
 
 	char token = get_next_token(current);
 	if (token == '$') {
-		printf("Start\n");
 		current->start = current->position;
 		handle_data(current);
 	}
 	else if	(token == '+') {
-		printf("Ack\n");
+		current->acks++;
 		handle_packet(current);
 	}
 }
@@ -67,12 +62,11 @@ int libgdbc_push_message(libgdbc_t* instance, parsing_object_t* parsed) {
 }
 
 
-int libgdbc_parse_packet(libgdbc_t* instance) {
+int parse_packet(libgdbc_t* instance) {
 	parsing_object_t new;
 	memset(&new, 0, sizeof(parsing_object_t));
 	new.length = instance->data_len;
 	new.buffer = instance->read_buff;
-	int i = 0;
 	while(new.position < new.length) {
 		handle_packet(&new);
 		libgdbc_push_message(instance, &new);

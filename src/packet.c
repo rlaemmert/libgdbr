@@ -50,8 +50,11 @@ void handle_packet(parsing_object_t* current) {
 	}
 }
 
-
-int libgdbc_push_message(libgdbc_t* instance, parsing_object_t* parsed) {
+// TODO ugly implementation (128 max message stack and pop_message does not care about the allocated buffer in push_message
+int push_message(libgdbc_t* instance, parsing_object_t* parsed) {
+	if (instance->message_stack.top >= 128) {
+		return -1;
+	}
 	libgdbc_message_t* message = &instance->message_stack.message_stack[instance->message_stack.top++];
 	message->msg = (char*) calloc((parsed->end - parsed->start) + 1, sizeof(char));
 	ssize_t len = (parsed->end - parsed->start);
@@ -62,6 +65,18 @@ int libgdbc_push_message(libgdbc_t* instance, parsing_object_t* parsed) {
 }
 
 
+char* pop_message(libgdbc_t* instance) {
+	if (instance->message_stack.top <= 0) {
+		return -1;
+	}
+	int top = --instance->message_stack.top;
+	char* msg = instance->message_stack.message_stack[top].msg;
+	if (instance->message_stack.message_stack[top].chk == cmd_checksum(msg)) {
+		return msg;
+	}
+	return -1;
+}
+
 int parse_packet(libgdbc_t* instance) {
 	parsing_object_t new;
 	memset(&new, 0, sizeof(parsing_object_t));
@@ -69,7 +84,7 @@ int parse_packet(libgdbc_t* instance) {
 	new.buffer = instance->read_buff;
 	while(new.position < new.length) {
 		handle_packet(&new);
-		libgdbc_push_message(instance, &new);
+		push_message(instance, &new);
 	}
 	// TODO check if its possible that gdbserver sends multiple acks in 1 packet
 	instance->acks += new.acks;

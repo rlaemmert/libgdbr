@@ -13,6 +13,11 @@
 #include "messages.h"
 #include "utils.h"
 
+#define X86_64 1
+#define X86 2
+#define ARM 3
+
+
 typedef struct libgdbc_message_t
 {
 	ssize_t len;
@@ -43,6 +48,10 @@ typedef struct libgdbc_t
 	int connected;
 	int acks;
 } libgdbc_t;
+
+typedef struct x86_64_t {
+	uint64_t rax;
+} x86_64_t;
 
 
 int send_command(libgdbc_t* instance, char* command);

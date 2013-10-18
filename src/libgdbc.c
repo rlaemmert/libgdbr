@@ -1,6 +1,8 @@
 #include "libgdbc.h"
 #include "core.h"
 
+#include <stdio.h>
+
 
 libgdbc_t instance;
 
@@ -29,8 +31,29 @@ int libgdbc_continue() {
 	return continue_instance(&instance);
 }
 
+
+int libgdbc_read_registers() {
+	int acks = instance.acks;
+	if (send_command(&instance, CMD_READREG) == 0) {
+		if ( acks < instance.acks) {
+			char* answer = pop_message(&instance);
+			instance.acks--;
+			free(answer);
+		}
+	}
+	return 0;
+}
+
 int libgdbc_send_cmd(char* command) {
+	int acks = instance.acks;
 	if (send_command(&instance, command) == 0) {
+		if (acks < instance.acks) {
+			/* the last send_command was a success so handling the answer now */
+			char* answer = pop_message(&instance);
+			instance.acks--;
+			printf("Msg: %s\n", answer);
+			free(answer);
+		}
 	} else {
 		return -1;
 	}

@@ -3,13 +3,20 @@
 
 int main() {
 	libgdbc_init();
-
+	char buffer[2500];
 	if(libgdbc_connect("localhost", 1234) == -1) {
 		printf("Error connecting to target\n");
 		return 0;
 	}
 	//libgdbc_regread(&con);
 	libgdbc_send_cmd("g");
+
+
+	do {
+		fgets(buffer, sizeof(buffer) - 1, stdin);
+		libgdbc_send_cmd(buffer);
+	} while (strncmp("quit", buffer, 3));
+	libgdbc_send_cmd("xmlRegisters=");
 	libgdbc_continue();
 	libgdbc_disconnect();
 	libgdbc_cleanup();

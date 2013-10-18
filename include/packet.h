@@ -18,6 +18,8 @@ typedef struct parsing_object_t
 
 
 int parse_packet(libgdbc_t* instance);
+int push_message(libgdbc_t* instance, parsing_object_t* parsed);
+char* pop_message(libgdbc_t* instance);
 void handle_data(parsing_object_t* current);
 void handle_chk(parsing_object_t* current);
 void handle_packet(parsing_object_t* current);

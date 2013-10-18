@@ -1,3 +1,6 @@
+# Get all register offsets:
+maintenance print remote-registers
+
 rax            0x0	0
 rbx            0xfffff800a5f735c8	-8793308580408
 rcx            0x86	134

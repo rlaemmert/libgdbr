@@ -10,13 +10,14 @@
 #include <unistd.h>
 #include <stdio.h>
 
-#include "messages.h"
 #include "utils.h"
 
 #define X86_64 1
 #define X86 2
 #define ARM 3
 
+#define CMD_CONTINUE "c"
+#define CMD_READREG  "g"
 
 typedef struct libgdbc_message_t
 {

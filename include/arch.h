@@ -1,15 +1,15 @@
 #ifndef ARCH_H
 #define ARCH_H
 
-typedef struct register_t {
+typedef struct registers_t {
 	char name[32];
 	uint64_t offset;
 	uint64_t size;
 	uint64_t value;
-} register_t;
+} registers_t;
 
-struct register_t x86_64[32] = {
-	{"rax",		0,		8,	0}
+struct registers_t x86_64[] = {
+	{"rax",		0,		8,	0},
 	{"rbx",		8,		8,	0},
 	{"rcx",		16,		8,	0},
 	{"rdx",		24,		8,	0},

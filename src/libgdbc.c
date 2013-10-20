@@ -33,15 +33,7 @@ int libgdbc_continue() {
 
 
 int libgdbc_read_registers() {
-	int acks = instance.acks;
-	if (send_command(&instance, CMD_READREG) == 0) {
-		if ( acks < instance.acks) {
-			char* answer = pop_message(&instance);
-			instance.acks--;
-			free(answer);
-		}
-	}
-	return 0;
+	return regread_instance(&instance);
 }
 
 int libgdbc_send_cmd(char* command) {

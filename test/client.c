@@ -8,9 +8,7 @@ int main() {
 		printf("Error connecting to target\n");
 		return 0;
 	}
-	//libgdbc_regread(&con);
-	libgdbc_send_cmd("g");
-
+	libgdbc_read_registers();
 
 	do {
 		fgets(buffer, sizeof(buffer) - 1, stdin);

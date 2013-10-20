@@ -4,6 +4,13 @@
  * with # and a final checksum
  * $<command>#<checksum>
  */
-#define CMD_CONTINUE "c"
-#define CMD_READREG  "g"
 
+#ifndef MESSAGES_H
+#define MESSAGES_H
+
+#include "core.h"
+
+
+int handle_g(libgdbc_t* instance);
+
+#endif

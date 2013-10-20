@@ -163,19 +163,7 @@ int disconnect_instance(libgdbc_t* instance) {
 
 int regread_instance(libgdbc_t* instance) {
 	send_command(instance, CMD_READREG);
-	libgdbc_message_t* msg = &instance->message_stack.message_stack[instance->message_stack.top-1];
-	printf("Msg: %s\n", msg->msg);
-	
-	int i = 0;
-	printf("Len: %i\n", msg->len);
-	for (i = 0;i<msg->len;i = i + 16) {
-		uint8_t current[17];
-		memcpy(current, msg->msg + i, 16);
-		current[16] = '\0';
-		uint64_t current_val = unpack_uint64_co (current, 16);
-		printf("0x%016llx\n", current_val);
-	}	
-	return 0;
+	return handle_g(instance);
 }
 
 

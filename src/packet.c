@@ -81,6 +81,7 @@ int parse_packet(libgdbc_t* instance) {
 	parsing_object_t new;
 	memset(&new, 0, sizeof(parsing_object_t));
 	new.length = instance->data_len;
+	printf("len: %i\n", new.length);
 	new.buffer = instance->read_buff;
 	while(new.position < new.length) {
 		handle_packet(&new);

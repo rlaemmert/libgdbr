@@ -12,5 +12,6 @@
 
 
 int handle_g(libgdbc_t* instance);
+int handle_m(libgdbc_t* instance);
 
 #endif

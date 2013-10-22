@@ -81,6 +81,7 @@ int create_instance(libgdbc_t* instance) {
 	instance->read_buff = (char*) malloc(2500);
 	instance->max_read_len = 2500;
 	instance->connected = 0;
+	instance->data_len = 0;
 	return 0; 
 }
 
@@ -164,6 +165,15 @@ int disconnect_instance(libgdbc_t* instance) {
 int regread_instance(libgdbc_t* instance) {
 	send_command(instance, CMD_READREG);
 	return handle_g(instance);
+}
+
+
+int memread_instance(libgdbc_t* instance, uint64_t address, uint64_t len) {
+	char command[255] = {};
+	int ret = snprintf(command, 255, "m%016llx,%lld", address, len);
+	send_command(instance, command);
+	if (ret == -1) return ret;
+	return handle_m(instance);
 }
 
 

@@ -36,6 +36,10 @@ int libgdbc_read_registers() {
 	return regread_instance(&instance);
 }
 
+int libgdbc_read_memory(uint64_t addr, uint64_t len) {
+	return memread_instance(&instance, addr, len);
+}
+
 int libgdbc_send_cmd(char* command) {
 	int acks = instance.acks;
 	if (send_command(&instance, command) == 0) {

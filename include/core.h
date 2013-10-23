@@ -11,10 +11,7 @@
 #include <stdio.h>
 
 #include "utils.h"
-
-#define X86_64 1
-#define X86 2
-#define ARM 3
+#include "arch.h"
 
 #define CMD_CONTINUE "c"
 #define CMD_READREG  "g"
@@ -49,6 +46,7 @@ typedef struct libgdbc_t
 	int acks;
 	uint8_t* data;
 	ssize_t data_len;
+	register_t* architecture;
 } libgdbc_t;
 
 typedef struct x86_64_t {

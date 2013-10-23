@@ -107,10 +107,11 @@ int delete_instance(libgdbc_t* instance) {
 /**
  * Function connects the defined host:port kombination
  * to the existing gdbserver instance
+ * TODO add connect function with parameters (i.e. qSupported...)
  */
 int connect_instance(libgdbc_t* instance, const char* host, int port) {
-	int					fd;
-	int					connected;
+	int	fd;
+	int	connected;
 	struct protoent		*protocol;
 	struct hostend		*hostaddr;
 	struct sockaddr_in	socketaddr;

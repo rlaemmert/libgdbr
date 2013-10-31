@@ -1,15 +1,20 @@
+/*! \file */
 #ifndef ARCH_H
 #define ARCH_H
 
+/*!
+ * This struct defines a generic
+ * register view
+ */
 typedef struct registers_t {
-	char name[32];
-	uint64_t offset;
-	uint64_t size;
-	uint64_t value;
+	char name[32]; /*! The Name of the current register */
+	uint64_t offset; /*! Offset in the data block */
+	uint64_t size;	/*! Size of the register */
+	uint64_t value; /*! Saves the value of the register */
 } registers_t;
 
 
-struct registers_t x86_64[] = {
+static registers_t x86_64[] = {
 	{"rax",		0,		8,	0},
 	{"rbx",		8,		8,	0},
 	{"rcx",		16,		8,	0},
@@ -71,7 +76,7 @@ struct registers_t x86_64[] = {
 };
 
 
-struct register_t x86_32[] = {
+static registers_t x86_32[] = {
 	{"eax",	0,	4,	0},
 	{"ecx",	4,	4,	0},
 	{"edx",	8,	4,	0},

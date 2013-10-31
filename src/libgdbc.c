@@ -7,8 +7,8 @@
 libgdbc_t instance;
 
 
-int libgdbc_init() {
-	return create_instance(&instance);
+int libgdbc_init(uint8_t architecture) {
+	return create_instance(&instance, architecture);
 }
 
 

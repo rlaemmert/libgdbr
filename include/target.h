@@ -1,3 +1,4 @@
+/*! \file */
 #include "libgdbc.h"
 
 typedef struct libgdbc_x86_64_t {

@@ -12,3 +12,6 @@ test.c
 .test.c.swp
 a.out
 *.swp
+
+/doc/html/*
+/doc/latex/*

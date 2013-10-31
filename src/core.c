@@ -2,13 +2,6 @@
 #include "packet.h"
 
 
-/**
- * This function sends the given command to the gdb server
- * it creates the needet checksum and creates the packet
- * i.e. command = 'g' will end in $g#67
- * instance : instance that defines the current gdb session
- * command	: defines the given command
- */
 int send_command(libgdbc_t* instance, char* command) {
 	uint8_t checksum = cmd_checksum(command);
 	int ret = snprintf(instance->send_buff, instance->max_send_len, "$%s#%.2x", command, checksum);
@@ -20,12 +13,6 @@ int send_command(libgdbc_t* instance, char* command) {
 }
 
 
-/**
- * This function sends the packet that lays
- * in instance->buff and checks the ack
- * from the server 
- * instance : defines the current gdb session
- */
 int send_packet(libgdbc_t* instance) {
 	if (!instance) {
 		// TODO corect error handling here
@@ -71,10 +58,7 @@ int read_packet(libgdbc_t* instance)
 }
 
 
-/**
- * Function creates a new instance of libgdbc_t
- */
-int create_instance(libgdbc_t* instance) {
+int create_instance(libgdbc_t* instance, uint8_t architecture) {
 	memset(instance,0, sizeof(libgdbc_t));
 	instance->send_buff = (char*) malloc(2500);
 	instance->max_send_len = 2500;
@@ -82,15 +66,14 @@ int create_instance(libgdbc_t* instance) {
 	instance->max_read_len = 2500;
 	instance->connected = 0;
 	instance->data_len = 0;
+	instance->architecture = architecture;
+	//if (architecture == ARCH_X86_64) instance->registers = x86_64;
+	//else if (architecture == ARCH_X86_32) instance->registers = x86_32;
+	//else return -1;
 	return 0; 
 }
 
 
-/**
- * Function deletes existing instance
- * i.e. frees all allocated memory inside the instance
- * remember it does not free the instance itself
- */
 int delete_instance(libgdbc_t* instance) {
 	int i;
 	for (i = 0 ; i < instance->message_stack.top ; i++) {
@@ -104,11 +87,6 @@ int delete_instance(libgdbc_t* instance) {
 }
 
 
-/**
- * Function connects the defined host:port kombination
- * to the existing gdbserver instance
- * TODO add connect function with parameters (i.e. qSupported...)
- */
 int connect_instance(libgdbc_t* instance, const char* host, int port) {
 	int	fd;
 	int	connected;

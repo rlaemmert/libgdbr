@@ -2,7 +2,7 @@
 #include "libgdbc.h"
 
 int main() {
-	libgdbc_init();
+	libgdbc_init(0);
 	char buffer[2500];
 	if(libgdbc_connect("localhost", 1234) == -1) {
 		printf("Error connecting to target\n");
@@ -14,7 +14,7 @@ int main() {
 	//	fgets(buffer, sizeof(buffer) - 1, stdin);
 	//	libgdbc_send_cmd(buffer);
 	//} while (strncmp("quit", buffer, 3));
-	libgdbc_read_memory(0xfffff88002ba8c08, 300);
+	libgdbc_read_memory(0xfffffa8004ac2010, 300);
 	libgdbc_continue();
 	libgdbc_disconnect();
 	libgdbc_cleanup();

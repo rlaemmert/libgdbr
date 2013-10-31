@@ -1,0 +1,58 @@
+\hypertarget{utils_8c}{\section{/home/rene/libgdbc/src/utils.c File Reference}
+\label{utils_8c}\index{/home/rene/libgdbc/src/utils.\-c@{/home/rene/libgdbc/src/utils.\-c}}
+}
+{\ttfamily \#include \char`\"{}utils.\-h\char`\"{}}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+uint8\-\_\-t \hyperlink{utils_8c_a26c2fa3bfed16db682cb75e84f3c68cb}{cmd\-\_\-checksum} (const char $\ast$command)
+\item 
+uint64\-\_\-t \hyperlink{utils_8c_a02e77aec44eb82778cadb8a8e4923e05}{unpack\-\_\-uint64} (char $\ast$buff, int len)
+\item 
+uint64\-\_\-t \hyperlink{utils_8c_a2ea059be4cc4140bdabf3128dfdfbbbe}{unpack\-\_\-uint64\-\_\-co} (char $\ast$buff, int len)
+\item 
+int \hyperlink{utils_8c_aec0746b93326081ce7da21f3b50ef164}{hex2int} (int ch)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{utils_8c_a26c2fa3bfed16db682cb75e84f3c68cb}{\index{utils.\-c@{utils.\-c}!cmd\-\_\-checksum@{cmd\-\_\-checksum}}
+\index{cmd\-\_\-checksum@{cmd\-\_\-checksum}!utils.c@{utils.\-c}}
+\subsubsection[{cmd\-\_\-checksum}]{\setlength{\rightskip}{0pt plus 5cm}uint8\-\_\-t cmd\-\_\-checksum (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{command}
+\end{DoxyParamCaption}
+)}}\label{utils_8c_a26c2fa3bfed16db682cb75e84f3c68cb}
+Function creates the checksum for the given command
+\begin{DoxyItemize}
+\item command \-: is used to calculate the checksum needs to be null terminated \begin{DoxyReturn}{Returns}
+\-: calculated checksum 
+\end{DoxyReturn}
+
+\end{DoxyItemize}\hypertarget{utils_8c_aec0746b93326081ce7da21f3b50ef164}{\index{utils.\-c@{utils.\-c}!hex2int@{hex2int}}
+\index{hex2int@{hex2int}!utils.c@{utils.\-c}}
+\subsubsection[{hex2int}]{\setlength{\rightskip}{0pt plus 5cm}int hex2int (
+\begin{DoxyParamCaption}
+\item[{int}]{ch}
+\end{DoxyParamCaption}
+)}}\label{utils_8c_aec0746b93326081ce7da21f3b50ef164}
+Converts a given hex character into its int value \begin{DoxyReturn}{Returns}
+value of hex or -\/1 on error 
+\end{DoxyReturn}
+\hypertarget{utils_8c_a02e77aec44eb82778cadb8a8e4923e05}{\index{utils.\-c@{utils.\-c}!unpack\-\_\-uint64@{unpack\-\_\-uint64}}
+\index{unpack\-\_\-uint64@{unpack\-\_\-uint64}!utils.c@{utils.\-c}}
+\subsubsection[{unpack\-\_\-uint64}]{\setlength{\rightskip}{0pt plus 5cm}uint64\-\_\-t unpack\-\_\-uint64 (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{buff, }
+\item[{int}]{len}
+\end{DoxyParamCaption}
+)}}\label{utils_8c_a02e77aec44eb82778cadb8a8e4923e05}
+Converts str to uint64\-\_\-t \hypertarget{utils_8c_a2ea059be4cc4140bdabf3128dfdfbbbe}{\index{utils.\-c@{utils.\-c}!unpack\-\_\-uint64\-\_\-co@{unpack\-\_\-uint64\-\_\-co}}
+\index{unpack\-\_\-uint64\-\_\-co@{unpack\-\_\-uint64\-\_\-co}!utils.c@{utils.\-c}}
+\subsubsection[{unpack\-\_\-uint64\-\_\-co}]{\setlength{\rightskip}{0pt plus 5cm}uint64\-\_\-t unpack\-\_\-uint64\-\_\-co (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{buff, }
+\item[{int}]{len}
+\end{DoxyParamCaption}
+)}}\label{utils_8c_a2ea059be4cc4140bdabf3128dfdfbbbe}
+Changed byte order and converts the value into uint64\-\_\-t 

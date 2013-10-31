@@ -57,3 +57,26 @@ int hex2int(int ch) {
 	if (ch >= '0' && ch <= '9') return ch - '0';
 	return -1;
 }
+
+
+void hexdump(void* ptr, uint64_t len, uint64_t offset) {
+	unsigned char* data = (unsigned char*)ptr;
+	int x = 0;
+	char hex[49], *p;
+	char txt[17], *c;
+	uint64_t curr_offset;
+	while (x < len) {
+		p = hex;
+		c = txt;
+		curr_offset = x+offset;
+
+		do {
+			p += sprintf(p, "%02hhx ", data[x]);
+			*c++ = (data[x] >= 32 && data[x] <= 127) ? data[x] : '.';
+		}while (++x % 16 && x < len);
+
+		*c = '\0';
+		printf("0x%016llx: %-48s- %s\n", (curr_offset), hex, txt);
+	}
+}
+

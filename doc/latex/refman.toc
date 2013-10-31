@@ -1,0 +1,60 @@
+\contentsline {chapter}{\numberline {1}Class Index}{1}{chapter.1}
+\contentsline {section}{\numberline {1.1}Class List}{1}{section.1.1}
+\contentsline {chapter}{\numberline {2}File Index}{3}{chapter.2}
+\contentsline {section}{\numberline {2.1}File List}{3}{section.2.1}
+\contentsline {chapter}{\numberline {3}Class Documentation}{5}{chapter.3}
+\contentsline {section}{\numberline {3.1}libgdbc\discretionary {-}{}{}\_\discretionary {-}{}{}message\discretionary {-}{}{}\_\discretionary {-}{}{}stack\discretionary {-}{}{}\_\discretionary {-}{}{}t Struct Reference}{5}{section.3.1}
+\contentsline {subsection}{\numberline {3.1.1}Detailed Description}{5}{subsection.3.1.1}
+\contentsline {subsection}{\numberline {3.1.2}Member Data Documentation}{5}{subsection.3.1.2}
+\contentsline {subsubsection}{\numberline {3.1.2.1}message\discretionary {-}{}{}\_\discretionary {-}{}{}stack}{5}{subsubsection.3.1.2.1}
+\contentsline {section}{\numberline {3.2}libgdbc\discretionary {-}{}{}\_\discretionary {-}{}{}message\discretionary {-}{}{}\_\discretionary {-}{}{}t Struct Reference}{5}{section.3.2}
+\contentsline {subsection}{\numberline {3.2.1}Detailed Description}{5}{subsection.3.2.1}
+\contentsline {subsection}{\numberline {3.2.2}Member Data Documentation}{6}{subsection.3.2.2}
+\contentsline {subsubsection}{\numberline {3.2.2.1}chk}{6}{subsubsection.3.2.2.1}
+\contentsline {subsubsection}{\numberline {3.2.2.2}msg}{6}{subsubsection.3.2.2.2}
+\contentsline {section}{\numberline {3.3}libgdbc\discretionary {-}{}{}\_\discretionary {-}{}{}t Struct Reference}{6}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}Detailed Description}{6}{subsection.3.3.1}
+\contentsline {section}{\numberline {3.4}libgdbc\discretionary {-}{}{}\_\discretionary {-}{}{}x86\discretionary {-}{}{}\_\discretionary {-}{}{}64\discretionary {-}{}{}\_\discretionary {-}{}{}t Struct Reference}{6}{section.3.4}
+\contentsline {section}{\numberline {3.5}parsing\discretionary {-}{}{}\_\discretionary {-}{}{}object\discretionary {-}{}{}\_\discretionary {-}{}{}t Struct Reference}{7}{section.3.5}
+\contentsline {section}{\numberline {3.6}registers\discretionary {-}{}{}\_\discretionary {-}{}{}t Struct Reference}{7}{section.3.6}
+\contentsline {subsection}{\numberline {3.6.1}Detailed Description}{7}{subsection.3.6.1}
+\contentsline {subsection}{\numberline {3.6.2}Member Data Documentation}{7}{subsection.3.6.2}
+\contentsline {subsubsection}{\numberline {3.6.2.1}offset}{7}{subsubsection.3.6.2.1}
+\contentsline {subsubsection}{\numberline {3.6.2.2}size}{7}{subsubsection.3.6.2.2}
+\contentsline {subsubsection}{\numberline {3.6.2.3}value}{7}{subsubsection.3.6.2.3}
+\contentsline {chapter}{\numberline {4}File Documentation}{9}{chapter.4}
+\contentsline {section}{\numberline {4.1}/home/rene/libgdbc/include/arch.h File Reference}{9}{section.4.1}
+\contentsline {subsection}{\numberline {4.1.1}Typedef Documentation}{9}{subsection.4.1.1}
+\contentsline {subsubsection}{\numberline {4.1.1.1}registers\discretionary {-}{}{}\_\discretionary {-}{}{}t}{9}{subsubsection.4.1.1.1}
+\contentsline {section}{\numberline {4.2}/home/rene/libgdbc/include/core.h File Reference}{9}{section.4.2}
+\contentsline {subsection}{\numberline {4.2.1}Typedef Documentation}{10}{subsection.4.2.1}
+\contentsline {subsubsection}{\numberline {4.2.1.1}libgdbc\discretionary {-}{}{}\_\discretionary {-}{}{}message\discretionary {-}{}{}\_\discretionary {-}{}{}stack\discretionary {-}{}{}\_\discretionary {-}{}{}t}{10}{subsubsection.4.2.1.1}
+\contentsline {subsubsection}{\numberline {4.2.1.2}libgdbc\discretionary {-}{}{}\_\discretionary {-}{}{}message\discretionary {-}{}{}\_\discretionary {-}{}{}t}{11}{subsubsection.4.2.1.2}
+\contentsline {subsubsection}{\numberline {4.2.1.3}libgdbc\discretionary {-}{}{}\_\discretionary {-}{}{}t}{11}{subsubsection.4.2.1.3}
+\contentsline {subsection}{\numberline {4.2.2}Function Documentation}{11}{subsection.4.2.2}
+\contentsline {subsubsection}{\numberline {4.2.2.1}connect\discretionary {-}{}{}\_\discretionary {-}{}{}instance}{11}{subsubsection.4.2.2.1}
+\contentsline {subsubsection}{\numberline {4.2.2.2}continue\discretionary {-}{}{}\_\discretionary {-}{}{}instance}{11}{subsubsection.4.2.2.2}
+\contentsline {subsubsection}{\numberline {4.2.2.3}create\discretionary {-}{}{}\_\discretionary {-}{}{}instance}{11}{subsubsection.4.2.2.3}
+\contentsline {subsubsection}{\numberline {4.2.2.4}delete\discretionary {-}{}{}\_\discretionary {-}{}{}instance}{12}{subsubsection.4.2.2.4}
+\contentsline {subsubsection}{\numberline {4.2.2.5}disconnect\discretionary {-}{}{}\_\discretionary {-}{}{}instance}{12}{subsubsection.4.2.2.5}
+\contentsline {subsubsection}{\numberline {4.2.2.6}dump\discretionary {-}{}{}\_\discretionary {-}{}{}message\discretionary {-}{}{}\_\discretionary {-}{}{}stack}{12}{subsubsection.4.2.2.6}
+\contentsline {subsubsection}{\numberline {4.2.2.7}memread\discretionary {-}{}{}\_\discretionary {-}{}{}instance}{12}{subsubsection.4.2.2.7}
+\contentsline {subsubsection}{\numberline {4.2.2.8}read\discretionary {-}{}{}\_\discretionary {-}{}{}packet}{12}{subsubsection.4.2.2.8}
+\contentsline {subsubsection}{\numberline {4.2.2.9}regread\discretionary {-}{}{}\_\discretionary {-}{}{}instance}{13}{subsubsection.4.2.2.9}
+\contentsline {subsubsection}{\numberline {4.2.2.10}send\discretionary {-}{}{}\_\discretionary {-}{}{}command}{13}{subsubsection.4.2.2.10}
+\contentsline {subsubsection}{\numberline {4.2.2.11}send\discretionary {-}{}{}\_\discretionary {-}{}{}packet}{13}{subsubsection.4.2.2.11}
+\contentsline {section}{\numberline {4.3}/home/rene/libgdbc/include/libgdbc.h File Reference}{14}{section.4.3}
+\contentsline {subsection}{\numberline {4.3.1}Function Documentation}{14}{subsection.4.3.1}
+\contentsline {subsubsection}{\numberline {4.3.1.1}libgdbc\discretionary {-}{}{}\_\discretionary {-}{}{}init}{14}{subsubsection.4.3.1.1}
+\contentsline {section}{\numberline {4.4}/home/rene/libgdbc/include/messages.h File Reference}{14}{section.4.4}
+\contentsline {subsection}{\numberline {4.4.1}Function Documentation}{14}{subsection.4.4.1}
+\contentsline {subsubsection}{\numberline {4.4.1.1}handle\discretionary {-}{}{}\_\discretionary {-}{}{}g}{14}{subsubsection.4.4.1.1}
+\contentsline {section}{\numberline {4.5}/home/rene/libgdbc/include/packet.h File Reference}{14}{section.4.5}
+\contentsline {section}{\numberline {4.6}/home/rene/libgdbc/include/target.h File Reference}{15}{section.4.6}
+\contentsline {section}{\numberline {4.7}/home/rene/libgdbc/include/utils.h File Reference}{15}{section.4.7}
+\contentsline {subsection}{\numberline {4.7.1}Function Documentation}{16}{subsection.4.7.1}
+\contentsline {subsubsection}{\numberline {4.7.1.1}cmd\discretionary {-}{}{}\_\discretionary {-}{}{}checksum}{16}{subsubsection.4.7.1.1}
+\contentsline {subsubsection}{\numberline {4.7.1.2}hex2int}{16}{subsubsection.4.7.1.2}
+\contentsline {subsubsection}{\numberline {4.7.1.3}unpack\discretionary {-}{}{}\_\discretionary {-}{}{}uint64}{16}{subsubsection.4.7.1.3}
+\contentsline {subsubsection}{\numberline {4.7.1.4}unpack\discretionary {-}{}{}\_\discretionary {-}{}{}uint64\discretionary {-}{}{}\_\discretionary {-}{}{}co}{16}{subsubsection.4.7.1.4}
+\contentsline {part}{Index}{16}{subsubsection.4.7.1.4}

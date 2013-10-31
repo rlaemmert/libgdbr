@@ -1,0 +1,79 @@
+\hypertarget{core_8c}{\section{/home/rene/libgdbc/src/core.c File Reference}
+\label{core_8c}\index{/home/rene/libgdbc/src/core.\-c@{/home/rene/libgdbc/src/core.\-c}}
+}
+{\ttfamily \#include \char`\"{}core.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}packet.\-h\char`\"{}}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{core_8c_a01d9765a42487a2d9fe9e2e795022153}{send\-\_\-command} (\hyperlink{structlibgdbc__t}{libgdbc\-\_\-t} $\ast$instance, char $\ast$command)
+\item 
+int \hyperlink{core_8c_a3739351679b57cb41d65dc5461a7cd41}{send\-\_\-packet} (\hyperlink{structlibgdbc__t}{libgdbc\-\_\-t} $\ast$instance)
+\item 
+\hypertarget{core_8c_a4a6836bd2f2ab47f56cda7e5b060f01e}{int {\bfseries read\-\_\-packet} (\hyperlink{structlibgdbc__t}{libgdbc\-\_\-t} $\ast$instance)}\label{core_8c_a4a6836bd2f2ab47f56cda7e5b060f01e}
+
+\item 
+int \hyperlink{core_8c_a1326e9724ec2505157c328dc532c589b}{create\-\_\-instance} (\hyperlink{structlibgdbc__t}{libgdbc\-\_\-t} $\ast$instance, uint8\-\_\-t architecture)
+\item 
+int \hyperlink{core_8c_ad8808f8acb521ba9f75c003669cea24a}{delete\-\_\-instance} (\hyperlink{structlibgdbc__t}{libgdbc\-\_\-t} $\ast$instance)
+\item 
+int \hyperlink{core_8c_a0c3b29dcd839f9d9c8cd7fb94760f734}{connect\-\_\-instance} (\hyperlink{structlibgdbc__t}{libgdbc\-\_\-t} $\ast$instance, const char $\ast$host, int port)
+\item 
+\hypertarget{core_8c_acfee97ce528a200918c40b674aef5494}{int {\bfseries disconnect\-\_\-instance} (\hyperlink{structlibgdbc__t}{libgdbc\-\_\-t} $\ast$instance)}\label{core_8c_acfee97ce528a200918c40b674aef5494}
+
+\item 
+\hypertarget{core_8c_a0138ed6d104ad563be40b71cbf1479ef}{int {\bfseries regread\-\_\-instance} (\hyperlink{structlibgdbc__t}{libgdbc\-\_\-t} $\ast$instance)}\label{core_8c_a0138ed6d104ad563be40b71cbf1479ef}
+
+\item 
+\hypertarget{core_8c_ab109f4c1f13c3233e17d9933a85652ea}{int {\bfseries memread\-\_\-instance} (\hyperlink{structlibgdbc__t}{libgdbc\-\_\-t} $\ast$instance, uint64\-\_\-t address, uint64\-\_\-t len)}\label{core_8c_ab109f4c1f13c3233e17d9933a85652ea}
+
+\item 
+\hypertarget{core_8c_a0b54a6a365867b2d4e2eb41049b67539}{int {\bfseries continue\-\_\-instance} (\hyperlink{structlibgdbc__t}{libgdbc\-\_\-t} $\ast$instance)}\label{core_8c_a0b54a6a365867b2d4e2eb41049b67539}
+
+\item 
+\hypertarget{core_8c_ab960b62ce70ba7132bb626f090c8a61a}{int {\bfseries dump\-\_\-message\-\_\-stack} (\hyperlink{structlibgdbc__t}{libgdbc\-\_\-t} $\ast$instance)}\label{core_8c_ab960b62ce70ba7132bb626f090c8a61a}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{core_8c_a0c3b29dcd839f9d9c8cd7fb94760f734}{\index{core.\-c@{core.\-c}!connect\-\_\-instance@{connect\-\_\-instance}}
+\index{connect\-\_\-instance@{connect\-\_\-instance}!core.c@{core.\-c}}
+\subsubsection[{connect\-\_\-instance}]{\setlength{\rightskip}{0pt plus 5cm}int connect\-\_\-instance (
+\begin{DoxyParamCaption}
+\item[{{\bf libgdbc\-\_\-t} $\ast$}]{instance, }
+\item[{const char $\ast$}]{host, }
+\item[{int}]{port}
+\end{DoxyParamCaption}
+)}}\label{core_8c_a0c3b29dcd839f9d9c8cd7fb94760f734}
+Function connects the defined host\-:port kombination to the existing gdbserver instance T\-O\-D\-O add connect function with parameters (i.\-e. q\-Supported...) \hypertarget{core_8c_a1326e9724ec2505157c328dc532c589b}{\index{core.\-c@{core.\-c}!create\-\_\-instance@{create\-\_\-instance}}
+\index{create\-\_\-instance@{create\-\_\-instance}!core.c@{core.\-c}}
+\subsubsection[{create\-\_\-instance}]{\setlength{\rightskip}{0pt plus 5cm}int create\-\_\-instance (
+\begin{DoxyParamCaption}
+\item[{{\bf libgdbc\-\_\-t} $\ast$}]{instance, }
+\item[{uint8\-\_\-t}]{architecture}
+\end{DoxyParamCaption}
+)}}\label{core_8c_a1326e9724ec2505157c328dc532c589b}
+Function creates a new instance of \hyperlink{structlibgdbc__t}{libgdbc\-\_\-t} \hypertarget{core_8c_ad8808f8acb521ba9f75c003669cea24a}{\index{core.\-c@{core.\-c}!delete\-\_\-instance@{delete\-\_\-instance}}
+\index{delete\-\_\-instance@{delete\-\_\-instance}!core.c@{core.\-c}}
+\subsubsection[{delete\-\_\-instance}]{\setlength{\rightskip}{0pt plus 5cm}int delete\-\_\-instance (
+\begin{DoxyParamCaption}
+\item[{{\bf libgdbc\-\_\-t} $\ast$}]{instance}
+\end{DoxyParamCaption}
+)}}\label{core_8c_ad8808f8acb521ba9f75c003669cea24a}
+Function deletes existing instance i.\-e. frees all allocated memory inside the instance remember it does not free the instance itself \hypertarget{core_8c_a01d9765a42487a2d9fe9e2e795022153}{\index{core.\-c@{core.\-c}!send\-\_\-command@{send\-\_\-command}}
+\index{send\-\_\-command@{send\-\_\-command}!core.c@{core.\-c}}
+\subsubsection[{send\-\_\-command}]{\setlength{\rightskip}{0pt plus 5cm}int send\-\_\-command (
+\begin{DoxyParamCaption}
+\item[{{\bf libgdbc\-\_\-t} $\ast$}]{instance, }
+\item[{char $\ast$}]{command}
+\end{DoxyParamCaption}
+)}}\label{core_8c_a01d9765a42487a2d9fe9e2e795022153}
+This function sends the given command to the gdb server it creates the needet checksum and creates the packet i.\-e. command = 'g' will end in \$g\#67 instance \-: instance that defines the current gdb session command \-: defines the given command \hypertarget{core_8c_a3739351679b57cb41d65dc5461a7cd41}{\index{core.\-c@{core.\-c}!send\-\_\-packet@{send\-\_\-packet}}
+\index{send\-\_\-packet@{send\-\_\-packet}!core.c@{core.\-c}}
+\subsubsection[{send\-\_\-packet}]{\setlength{\rightskip}{0pt plus 5cm}int send\-\_\-packet (
+\begin{DoxyParamCaption}
+\item[{{\bf libgdbc\-\_\-t} $\ast$}]{instance}
+\end{DoxyParamCaption}
+)}}\label{core_8c_a3739351679b57cb41d65dc5461a7cd41}
+This function sends the packet that lays in instance-\/$>$buff and checks the ack from the server instance \-: defines the current gdb session 

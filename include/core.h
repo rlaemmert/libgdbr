@@ -59,6 +59,9 @@ typedef struct libgdbc_t
 	ssize_t data_len;
 	uint8_t architecture;
 	register_t* registers;
+#if RADARE
+	
+#endif	
 } libgdbc_t;
 
 /*!

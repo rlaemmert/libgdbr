@@ -26,8 +26,7 @@ int send_packet(libgdbc_t* instance) {
 }
 
 
-int read_packet(libgdbc_t* instance)
-{
+int read_packet(libgdbc_t* instance) {
 	if (!instance) {
 		// TODO correct error handling here
 		printf("Initialize libgdbc_t first\n");

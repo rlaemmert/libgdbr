@@ -58,3 +58,6 @@ run_test: client
 
 gdb_test: client
 	LD_LIBRARY_PATH=./lib gdb ./test/client
+
+edit:
+	vim -c "args **/*.h **/*.c"

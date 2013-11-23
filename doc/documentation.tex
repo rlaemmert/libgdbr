@@ -8,14 +8,46 @@
 \maketitle
 
 \begin{abstract}
-This library is a simple implementation of the gdb remote protocol.
-It is built to be embedded into the radare2 project
+libgdbc ist eine library welche die Verbindung bzw Kommunikation mit einem gdbserver verwalten soll.
+Hauptziel dabei ist es die bestehende Implementierung im radare2 Projekt zu ersetzen.
 \end{abstract}
 
-\section{Opening}
-\input{functions}
+\section{Ben\"otigt}
+Dieser Abschnitt beschreibt die Anforderungen an die Funktionalit\"at der Bibliothek.
 
 
-\section{Conclusion}
+\subsection{Funktionen}
+\begin{descrition}
+	\item[Connect]\hfill \\
+	\item[Disconnect]\hfill \\
+	\item[Stepping]\hfill \\
+	\item[Read Register]\hfill \\
+	\item[Write Register]\hfill \\
+	\item[Read Memory]\hfill \\
+	\item[Write Memory]\hfill \\
+\end{description}
+\subsection{Allgemeines}
+\begin{description}
+	\item[Useflag style um radare, windows und linux versionen bauen zu k\"onnen]\hfill \\
+	\item[In erster Linie bezogen auf Sockets]\hfill \\
+\end{description}
+\subsection{Tests}
+\begin{description}
+	\item[Komplette debug session]\hfill \\
+	\item[Qemu]\hfill \\
+	\item[Linux]\hfill \\
+	\item[Windows]\hfill \\
+	\item[VM-Ware]\hfill \\
+	\item[automatische tests aller funktionen]\hfill \\
+\end{description}
 
+\subsection{Aufbau}
+\begin{description}
+	\item[libgdbbc]\hfill \\
+	Haupteinstiegspunkt in die lib. Die Instanz der gesamten lib wird hier verborgen.
+	\item[core]\hfill \\
+	\item[messages]\hfill \\
+	\item[packet]\hfill \\
+	\item[utils]\hfill \\
+\end{description}
 \end{document}

@@ -9,7 +9,7 @@
 #ifndef MESSAGES_H
 #define MESSAGES_H
 
-#include "core.h"
+#include "libgdbc.h"
 
 int handle_g(libgdbc_t* instance);
 int handle_m(libgdbc_t* instance);

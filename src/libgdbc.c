@@ -7,39 +7,39 @@
 libgdbc_t instance;
 
 
-int libgdbc_init(uint8_t architecture) {
-	return create_instance(&instance, architecture);
-}
-
-
-int libgdbc_cleanup() {
-	return delete_instance(&instance);
-}
-
-
-int libgdbc_connect(char* server, int port) {
-	return connect_instance(&instance, server, port);
-}
-
-
-int libgdbc_disconnect() {
-	return disconnect_instance(&instance);
-}
-
-
-int libgdbc_continue() {
-	return continue_instance(&instance);
-}
-
-
-int libgdbc_read_registers() {
-	return regread_instance(&instance);
-}
-
-
-int libgdbc_read_memory(uint64_t addr, uint64_t len) {
-	return memread_instance(&instance, addr, len);
-}
+//int libgdbc_init(libgdbc_t* instance, uint8_t architecture) {
+//	return create_instance(&instance, architecture);
+//}
+//
+//
+//int libgdbc_cleanup() {
+//	return delete_instance(&instance);
+//}
+//
+//
+//int libgdbc_connect(char* server, int port) {
+//	return connect_instance(&instance, server, port);
+//}
+//
+//
+//int libgdbc_disconnect() {
+//	return disconnect_instance(&instance);
+//}
+//
+//
+//int libgdbc_continue() {
+//	return continue_instance(&instance);
+//}
+//
+//
+//int libgdbc_read_registers() {
+//	return regread_instance(&instance);
+//}
+//
+//
+//int libgdbc_read_memory(uint64_t addr, uint64_t len) {
+//	return memread_instance(&instance, addr, len);
+//}
 
 
 int libgdbc_send_cmd(char* command) {

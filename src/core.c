@@ -1,5 +1,118 @@
+#include "libgdbc.h"
 #include "core.h"
 #include "packet.h"
+
+
+int gdbc_init(libgdbc_t* instance, uint8_t architecture) {
+	memset(instance,0, sizeof(libgdbc_t));
+	instance->send_buff = (char*) malloc(2500);
+	instance->max_send_len = 2500;
+	instance->read_buff = (char*) malloc(2500);
+	instance->max_read_len = 2500;
+	instance->connected = 0;
+	instance->data_len = 0;
+	instance->architecture = architecture;
+	//if (architecture == ARCH_X86_64) instance->registers = x86_64;
+	//else if (architecture == ARCH_X86_32) instance->registers = x86_32;
+	//else return -1;
+	return 0; 
+}
+
+
+int gdbc_cleanup(libgdbc_t* instance) {
+	int i;
+	for (i = 0 ; i < instance->message_stack.top ; i++) {
+		free(instance->message_stack.message_stack[i].msg);
+	}
+	free(instance->send_buff);
+	instance->max_send_len = 0;
+	free(instance->read_buff);
+	instance->max_read_len = 0;
+	return 0;
+}
+
+
+int gdbc_connect(libgdbc_t* instance, const char* host, int port) {
+	int	fd;
+	int	connected;
+	struct protoent		*protocol;
+	struct hostend		*hostaddr;
+	struct sockaddr_in	socketaddr;
+	
+	protocol = getprotobyname("tcp");
+	if (!protocol) {
+		printf("Error prot\n");
+		//TODO Error here
+		return -1;
+	}
+
+	fd = socket( PF_INET, SOCK_STREAM, protocol->p_proto);
+	if (fd == -1) {
+		printf("Error sock\n");
+		//TODO Error here
+		return -1;
+	}
+	memset(&socketaddr, 0, sizeof(socketaddr));
+	socketaddr.sin_family = AF_INET;
+	socketaddr.sin_port = htons(port);
+	hostaddr = gethostbyname(host);
+
+	if (!hostaddr) {
+		printf("Error host\n");
+		//TODO Error here
+		return -1;
+	}
+	
+	connected = connect(fd, (struct sockaddr *) &socketaddr, sizeof(socketaddr));
+	if (connected == -1) {
+		printf("error conn\n");
+		//TODO Error here
+		return -1;
+	}
+	instance->fd = fd;
+	instance->connected = 1;
+	// TODO add config possibility here
+	char* message = "qSupported:multiprocess+;qRelocInsn+";
+	send_command(instance, message);
+	return 0;
+}
+
+
+int gdbc_disconnect(libgdbc_t* instance) {
+	// TODO Disconnect maybe send something to gdbserver
+	close(instance->fd);
+	instance->connected = 0;
+	return 0;
+}
+
+
+int gdbc_read_registers(libgdbc_t* instance) {
+	send_command(instance, CMD_READREG);
+	return handle_g(instance);
+}
+
+
+int gdbc_read_memory(libgdbc_t* instance, uint64_t address, uint64_t len) {
+	char command[255] = {};
+	int ret = snprintf(command, 255, "m%016llx,%lld", address, len);
+	send_command(instance, command);
+	if (ret == -1) return ret;
+	return handle_m(instance);
+}
+
+
+int gdbc_continue(libgdbc_t* instance) {
+	return send_command(instance, CMD_CONTINUE);
+}
+
+
+int dump_message_stack(libgdbc_t* instance) {
+	libgdbc_message_t* current = &instance->message_stack.message_stack[0];
+	while(current <= &instance->message_stack.message_stack[instance->message_stack.top-1]) {
+		printf("Msg: %s\n", current->msg);
+		current++;
+	}
+}
 
 
 int send_command(libgdbc_t* instance, char* command) {
@@ -55,116 +168,3 @@ int read_packet(libgdbc_t* instance) {
 	parse_packet(instance);
 	return ret;
 }
-
-
-int create_instance(libgdbc_t* instance, uint8_t architecture) {
-	memset(instance,0, sizeof(libgdbc_t));
-	instance->send_buff = (char*) malloc(2500);
-	instance->max_send_len = 2500;
-	instance->read_buff = (char*) malloc(2500);
-	instance->max_read_len = 2500;
-	instance->connected = 0;
-	instance->data_len = 0;
-	instance->architecture = architecture;
-	//if (architecture == ARCH_X86_64) instance->registers = x86_64;
-	//else if (architecture == ARCH_X86_32) instance->registers = x86_32;
-	//else return -1;
-	return 0; 
-}
-
-
-int delete_instance(libgdbc_t* instance) {
-	int i;
-	for (i = 0 ; i < instance->message_stack.top ; i++) {
-		free(instance->message_stack.message_stack[i].msg);
-	}
-	free(instance->send_buff);
-	instance->max_send_len = 0;
-	free(instance->read_buff);
-	instance->max_read_len = 0;
-	return 0;
-}
-
-
-int connect_instance(libgdbc_t* instance, const char* host, int port) {
-	int	fd;
-	int	connected;
-	struct protoent		*protocol;
-	struct hostend		*hostaddr;
-	struct sockaddr_in	socketaddr;
-	
-	protocol = getprotobyname("tcp");
-	if (!protocol) {
-		printf("Error prot\n");
-		//TODO Error here
-		return -1;
-	}
-
-	fd = socket( PF_INET, SOCK_STREAM, protocol->p_proto);
-	if (fd == -1) {
-		printf("Error sock\n");
-		//TODO Error here
-		return -1;
-	}
-	memset(&socketaddr, 0, sizeof(socketaddr));
-	socketaddr.sin_family = AF_INET;
-	socketaddr.sin_port = htons(port);
-	hostaddr = gethostbyname(host);
-
-	if (!hostaddr) {
-		printf("Error host\n");
-		//TODO Error here
-		return -1;
-	}
-	
-	connected = connect(fd, (struct sockaddr *) &socketaddr, sizeof(socketaddr));
-	if (connected == -1) {
-		printf("error conn\n");
-		//TODO Error here
-		return -1;
-	}
-	instance->fd = fd;
-	instance->connected = 1;
-	// TODO add config possibility here
-	char* message = "qSupported:multiprocess+;qRelocInsn+";
-	send_command(instance, message);
-	return 0;
-}
-
-
-int disconnect_instance(libgdbc_t* instance) {
-	// TODO Disconnect maybe send something to gdbserver
-	close(instance->fd);
-	instance->connected = 0;
-	return 0;
-}
-
-
-int regread_instance(libgdbc_t* instance) {
-	send_command(instance, CMD_READREG);
-	return handle_g(instance);
-}
-
-
-int memread_instance(libgdbc_t* instance, uint64_t address, uint64_t len) {
-	char command[255] = {};
-	int ret = snprintf(command, 255, "m%016llx,%lld", address, len);
-	send_command(instance, command);
-	if (ret == -1) return ret;
-	return handle_m(instance);
-}
-
-
-int continue_instance(libgdbc_t* instance) {
-	return send_command(instance, CMD_CONTINUE);
-}
-
-
-int dump_message_stack(libgdbc_t* instance) {
-	libgdbc_message_t* current = &instance->message_stack.message_stack[0];
-	while(current <= &instance->message_stack.message_stack[instance->message_stack.top-1]) {
-		printf("Msg: %s\n", current->msg);
-		current++;
-	}
-}
-

@@ -1,5 +1,8 @@
 \documentclass{article}
 \usepackage{listings} \lstset{numbers=left, numberstyle=\tiny, numbersep=5pt} 
+\usepackage{tikz}
+\usetikzlibrary{arrows,shadows}
+\usepackage{pgf-umlsd}
 
 \begin{document}
 \title{GDB Library for client remote connection}
@@ -34,6 +37,7 @@ Dieser Abschnitt beschreibt die Anforderungen an die Funktionalit\"at der Biblio
 \subsection{Tests}
 \begin{description}
 	\item[Komplette debug session]\hfill \\
+		\input{rebalance}
 	\item[Qemu]\hfill \\
 	\item[Linux]\hfill \\
 	\item[Windows]\hfill \\

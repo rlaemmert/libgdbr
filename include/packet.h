@@ -2,9 +2,9 @@
 #ifndef PACKET_H
 #define PACKET_H
 
-#include "core.h"
 #include <stdint.h>
 #include <unistd.h>
+#include "libgdbc.h"
 
 typedef struct parsing_object_t
 {

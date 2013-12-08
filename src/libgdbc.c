@@ -49,7 +49,7 @@ int libgdbc_send_cmd(char* command) {
 			/* the last send_command was a success so handling the answer now */
 			char* answer = pop_message(&instance);
 			instance.acks--;
-			printf("Msg: %s\n", answer);
+//			printf("Msg: %s\n", answer);
 			free(answer);
 		}
 	} else {

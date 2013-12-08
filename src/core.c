@@ -11,6 +11,8 @@ int gdbc_init(libgdbc_t* instance, uint8_t architecture) {
 	instance->max_read_len = 2500;
 	instance->connected = 0;
 	instance->data_len = 0;
+	instance->data = calloc(4096, sizeof(char));
+	instance->data_max = 4096;
 	instance->architecture = architecture;
 	//if (architecture == ARCH_X86_64) instance->registers = x86_64;
 	//else if (architecture == ARCH_X86_32) instance->registers = x86_32;
@@ -21,7 +23,7 @@ int gdbc_init(libgdbc_t* instance, uint8_t architecture) {
 
 int gdbc_cleanup(libgdbc_t* instance) {
 	int i;
-	for (i = 0 ; i < instance->message_stack.top ; i++) {
+	for (i = 0 ; i < instance->message_stack.count ; i++) {
 		free(instance->message_stack.message_stack[i].msg);
 	}
 	free(instance->send_buff);
@@ -108,7 +110,7 @@ int gdbc_continue(libgdbc_t* instance) {
 
 int dump_message_stack(libgdbc_t* instance) {
 	libgdbc_message_t* current = &instance->message_stack.message_stack[0];
-	while(current <= &instance->message_stack.message_stack[instance->message_stack.top-1]) {
+	while(current <= &instance->message_stack.message_stack[instance->message_stack.count	- 1]) {
 		printf("Msg: %s\n", current->msg);
 		current++;
 	}

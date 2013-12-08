@@ -24,7 +24,7 @@ typedef struct libgdbc_message_t
  */
 typedef struct libgdbc_message_stack_t
 {
-	int top; /*! Top of the message stack (index) */
+	int count; 
 	libgdbc_message_t message_stack[128];	/*! Message stack itself (just a trivial array with 128 places */
 } libgdbc_message_stack_t;
 
@@ -48,6 +48,7 @@ typedef struct libgdbc_t
 	int acks;
 	uint8_t* data;
 	ssize_t data_len;
+	ssize_t data_max;
 	uint8_t architecture;
 	registers_t* registers;
 } libgdbc_t;

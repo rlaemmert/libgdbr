@@ -52,10 +52,12 @@ void handle_packet(parsing_object_t* current) {
 
 // TODO ugly implementation (128 max message stack and pop_message does not care about the allocated buffer in push_message
 int push_message(libgdbc_t* instance, parsing_object_t* parsed) {
-	if (instance->message_stack.top >= 128) {
+	if (instance->message_stack.count >= 128) {
 		return -1;
 	}
-	libgdbc_message_t* message = &instance->message_stack.message_stack[instance->message_stack.top++];
+	instance->message_stack.count++; // increment the count of our message stack
+	int index = instance->message_stack.count - 1;
+	libgdbc_message_t* message = &instance->message_stack.message_stack[index];
 	message->msg = (char*) calloc((parsed->end - parsed->start) + 1, sizeof(char));
 	ssize_t len = (parsed->end - parsed->start);
 	memcpy(message->msg, parsed->buffer + parsed->start, len);
@@ -66,12 +68,12 @@ int push_message(libgdbc_t* instance, parsing_object_t* parsed) {
 
 
 char* pop_message(libgdbc_t* instance) {
-	if (instance->message_stack.top <= 0) {
+	if (instance->message_stack.count <= 0) {
 		return -1;
 	}
-	int top = --instance->message_stack.top;
-	char* msg = instance->message_stack.message_stack[top].msg;
-	if (instance->message_stack.message_stack[top].chk == cmd_checksum(msg)) {
+	int index = --instance->message_stack.count;
+	char* msg = instance->message_stack.message_stack[index].msg;
+	if (instance->message_stack.message_stack[index].chk == cmd_checksum(msg)) {
 		return msg;
 	}
 	return -1;

@@ -84,7 +84,7 @@ int gdbc_disconnect(libgdbc_t* instance);
 int gdbc_continue(libgdbc_t* instance);
 int gdbc_read_registers(libgdbc_t* instance);
 int gdbc_read_memory(libgdbc_t* instance, uint64_t address, uint64_t len);
-int gdbc_write_memory(libgdbc_t* instance, uint64_t address, char* data, uint64_t len_;
+int gdbc_write_memory(libgdbc_t* instance, uint64_t address, char* data, uint64_t len);
 int gdbc_send_cmd(libgdbc_t* instance, char* command);
 
 #endif

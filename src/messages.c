@@ -25,14 +25,8 @@ int handle_g(libgdbr_t* instance) {
 	//instance->data = calloc((msg->len / 2), sizeof(char));
 	instance->data_len = (msg->len / 2);
 	
-	i = 0;
-	while (i <= msg->len / 2) {
-		int val = hex2int(msg->msg[(i*2)]);
-		val <<= 4;
-		val |= hex2int(msg->msg[(i*2)+1]);
-		instance->data[i++] = val;
-	}
-	//hexdump(instance->data, instance->data_len, 0);
+	unpack_hex(msg->msg, msg->len, instance->data);
+	hexdump(instance->data, instance->data_len, 0);
 	return 0;
 }
 
@@ -47,13 +41,7 @@ int handle_m(libgdbr_t* instance) {
 	//printf("Msg: %s with len: %i\n", msg->msg, msg->len); //TODO add debug flag here?
 	instance->data_len = (msg->len / 2);
 	
-	int i = 0;
-	while (i <= msg->len / 2) {
-		int val = hex2int(msg->msg[(i*2)]);
-		val <<= 4;
-		val |= hex2int(msg->msg[(i*2)+1]);
-		instance->data[i++] = val;
-	}
+	unpack_hex(msg->msg, msg->len, instance->data);
 	hexdump(instance->data, instance->data_len, 0);
 	instance->message_stack.count--; 
 

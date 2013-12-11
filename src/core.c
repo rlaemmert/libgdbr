@@ -109,13 +109,7 @@ int gdbr_write_memory(libgdbr_t* instance, uint64_t address, char* data, uint64_
 	int command_len = strlen(command);
 	char* tmp = calloc(command_len + (len * 2), sizeof(char));
 	memcpy(tmp, command, command_len);
-	int i = 0;
-	int x = 0;
-	while (i < (len*2)) {
-		int val = (data[x] & 0xf0) >> 4;
-		tmp[command_len + i++] = int2hex(val);
-		tmp[command_len + i++] = int2hex(data[x++] & 0x0f);
-	}
+	pack_hex(data, len, (tmp + command_len));
 	send_command(instance, tmp);
 	free(tmp);
 	return 0;

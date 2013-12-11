@@ -90,3 +90,28 @@ void hexdump(void* ptr, uint64_t len, uint64_t offset) {
 	}
 }
 
+
+int unpack_hex(char* src, uint64_t len, char* dst) {
+	int i = 0;
+	while (i < len / 2) {
+		int val = hex2int(src[(i*2)]);
+		val <<= 4;
+		val |= hex2int(src[(i*2)+1]);
+		dst[i++] = val;
+	}
+	dst[i] = '\0';
+	return len;
+}
+
+
+int pack_hex(char* src, uint64_t len, char* dst) {
+	int i = 0;
+	int x = 0;
+	while (i < (len*2)) {
+		int val = (src[x] & 0xf0) >> 4;
+		dst[i++] = int2hex(val);
+		dst[i++] = int2hex(src[x++] & 0x0f);
+	}
+	dst[i] = '\0';
+	return (len/2);
+}

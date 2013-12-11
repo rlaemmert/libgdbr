@@ -1,6 +1,6 @@
 /*! \file */
-#include "libgdbc.h"
+#include "libgdbr.h"
 
-typedef struct libgdbc_x86_64_t {
+typedef struct libgdbr_x86_64_t {
 	uint64_t* registers;
-} libgdbc_x86_64_t;
+} libgdbr_x86_64_t;

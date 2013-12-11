@@ -1,13 +1,13 @@
 #include <glib.h>
-#include "libgdbc.h"
+#include "libgdbr.h"
 
 char parse_cmd1[] = "+$qSupported:multiprocess+;qRelocInsn+#2a$T02thread:01;#04+";
 
 void parse_test() {
-	libgdbc_t instance;
+	libgdbr_t instance;
 	instance.read_buff = parse_cmd1;
 	instance.data_len = strlen(parse_cmd1);
-	libgdbc_parse_packet(&instance);
+	libgdbr_parse_packet(&instance);
 }
 
 int main(int argc, char **argv) {

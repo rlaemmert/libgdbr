@@ -9,9 +9,9 @@
 #ifndef MESSAGES_H
 #define MESSAGES_H
 
-#include "libgdbc.h"
+#include "libgdbr.h"
 
-int handle_g(libgdbc_t* instance);
-int handle_m(libgdbc_t* instance);
+int handle_g(libgdbr_t* instance);
+int handle_m(libgdbr_t* instance);
 
 #endif

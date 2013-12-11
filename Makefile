@@ -1,5 +1,5 @@
 CC				= gcc
-LIBNAME		= libgdbc
+LIBNAME		= libgdbr
 MAJOR			= 0
 MINOR			= 1
 CFLAGS		= -Wall -g -O0 -ggdb # -std=gnu11
@@ -44,14 +44,14 @@ clean:
 
 unit: lib 
 	$(CC) $(CFLAGS) $(TEST_INCLUDES) -c $(UNIT_TEST) -o $(TEST_D)/unit.o
-	$(LD) $(TEST_D)/unit.o -o $(TEST_D)/unit -L$(LIB) -lgdbc -lglib-2.0
+	$(LD) $(TEST_D)/unit.o -o $(TEST_D)/unit -L$(LIB) -lgdbr -lglib-2.0
 
 run_unit: unit
 	LD_LIBRARY_PATH=./lib ./test/unit
 
 client: lib
 	$(CC) $(CFLAGS) $(INCLUDES) -c $(CLIENT) -o $(TEST_D)/client.o
-	$(LD) $(TEST_D)/client.o -o $(TEST_D)/client -L$(LIB) -lgdbc
+	$(LD) $(TEST_D)/client.o -o $(TEST_D)/client -L$(LIB) -lgdbr
 
 run_test: client
 	LD_LIBRARY_PATH=./lib ./test/client

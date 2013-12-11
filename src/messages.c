@@ -4,13 +4,13 @@
 #include "utils.h"
 
 
-int handle_g(libgdbc_t* instance) {
+int handle_g(libgdbr_t* instance) {
 	int index = instance->message_stack.count - 1;
 	if (index < 0 ) {
 		// theres no message that we could handle..
 		return -1;
 	}
-	libgdbc_message_t* msg = &instance->message_stack.message_stack[index];
+	libgdbr_message_t* msg = &instance->message_stack.message_stack[index];
 	//printf("Msg: %s with len: %i\n", msg->msg, msg->len);
 	
 	int len = msg->len;
@@ -37,13 +37,13 @@ int handle_g(libgdbc_t* instance) {
 }
 
 
-int handle_m(libgdbc_t* instance) {
+int handle_m(libgdbr_t* instance) {
 	int index = instance->message_stack.count - 1;
 	if (index < 0 ) {
 		// theres no message that we could handle..
 		return -1;
 	}
-	libgdbc_message_t* msg = &instance->message_stack.message_stack[index];
+	libgdbr_message_t* msg = &instance->message_stack.message_stack[index];
 	//printf("Msg: %s with len: %i\n", msg->msg, msg->len); //TODO add debug flag here?
 	instance->data_len = (msg->len / 2);
 	

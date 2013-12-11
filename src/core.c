@@ -103,6 +103,25 @@ int gdbc_read_memory(libgdbc_t* instance, uint64_t address, uint64_t len) {
 }
 
 
+int gdbc_write_memory(libgdbc_t* instance, uint64_t address, char* data, uint64_t len) {
+	char command[255] = {};
+	snprintf(command, 255, "M%016llx,%lld:", address, len);
+	int command_len = strlen(command);
+	char* tmp = calloc(command_len + (len * 2), sizeof(char));
+	memcpy(tmp, command, command_len);
+	int i = 0;
+	int x = 0;
+	while (i < (len*2)) {
+		int val = (data[x] & 0xf0) >> 4;
+		tmp[command_len + i++] = int2hex(val);
+		tmp[command_len + i++] = int2hex(data[x++] & 0x0f);
+	}
+	send_command(instance, tmp);
+	free(tmp);
+	return 0;
+}
+
+
 int gdbc_continue(libgdbc_t* instance) {
 	return send_command(instance, CMD_CONTINUE);
 }

@@ -15,6 +15,8 @@ int main() {
 	//	fgets(buffer, sizeof(buffer) - 1, stdin);
 	//	libgdbc_send_cmd(buffer);
 	//} while (strncmp("quit", buffer, 3));
+	gdbc_write_memory(&gdb, 0xfffff80107f8603f, "Hallo", 5);
+
 	gdbc_read_memory(&gdb, 0xfffffa8004ac2010, 300);
 	gdbc_continue(&gdb);
 	gdbc_disconnect(&gdb);

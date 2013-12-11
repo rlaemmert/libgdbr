@@ -17,8 +17,8 @@ int handle_g(libgdbc_t* instance) {
 	int i = 0;
 	printf("Len: %i\n", len);
 	while(len > 0) {
-	//	printf("reg[%i] %s = ", i, x86_64[i].name);
-	//	printf("%016llx\n", unpack_uint64_co ((msg->msg + x86_64[i].offset * 2), x86_64[i].size * 2));
+		printf("reg[%i] %s = ", i, x86_64[i].name);
+		printf("%016llx\n", unpack_uint64_co ((msg->msg + x86_64[i].offset * 2), x86_64[i].size * 2));
 		len -= x86_64[i++].size * 2;
 	}
 	// printf("Msg: %s with len: %i\n", msg->msg, msg->len); //TODO Debug...
@@ -54,7 +54,7 @@ int handle_m(libgdbc_t* instance) {
 		val |= hex2int(msg->msg[(i*2)+1]);
 		instance->data[i++] = val;
 	}
-	//hexdump(instance->data, instance->data_len, 0);
+	hexdump(instance->data, instance->data_len, 0);
 	instance->message_stack.count--; 
 
 	return 0;

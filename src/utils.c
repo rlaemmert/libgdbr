@@ -58,6 +58,16 @@ int hex2int(int ch) {
 	return -1;
 }
 
+/**
+ * Converts a given nibble (4bit) into its hex representation
+ * @returns hex char or -1 on error
+ */
+int int2hex(int i) {
+	if (i >= 0 && i <= 9) return i + 48;
+	if (i >= 10 && i <= 15) return i + 55;
+	return -1;
+}
+
 
 void hexdump(void* ptr, uint64_t len, uint64_t offset) {
 	unsigned char* data = (unsigned char*)ptr;

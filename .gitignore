@@ -6,7 +6,7 @@
 .project
 .settings/
 
-test/client
+/test/client
 test/unit
 test.c
 .test.c.swp
@@ -18,3 +18,4 @@ a.out
 /doc/*.pdf
 /doc/*.aux
 /doc/*.log
+/lib/libgdbc.so

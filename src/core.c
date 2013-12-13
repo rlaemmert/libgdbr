@@ -4,14 +4,15 @@
 
 
 int gdbr_init(libgdbr_t* instance, uint8_t architecture) {
-	memset(instance,0, sizeof(libgdbr_t));
-	instance->send_buff = (char*) malloc(2500);
+	//memset(instance,0, sizeof(libgdbr_t));
+	instance->send_buff = (char*) calloc(2500, sizeof(char));
 	instance->max_send_len = 2500;
-	instance->read_buff = (char*) malloc(2500);
+	instance->read_buff = (char*) calloc(2500, sizeof(char));
 	instance->max_read_len = 2500;
 	instance->connected = 0;
 	instance->data_len = 0;
 	instance->data = calloc(4096, sizeof(char));
+	printf("0x%16llx\n", instance->data);
 	instance->data_max = 4096;
 	instance->architecture = architecture;
 	//if (architecture == ARCH_X86_64) instance->registers = x86_64;
@@ -26,6 +27,8 @@ int gdbr_cleanup(libgdbr_t* instance) {
 	for (i = 0 ; i < instance->message_stack.count ; i++) {
 		free(instance->message_stack.message_stack[i].msg);
 	}
+	printf("0x%16llx\n", instance->data);
+	free(instance->data);
 	free(instance->send_buff);
 	instance->max_send_len = 0;
 	free(instance->read_buff);
@@ -76,7 +79,7 @@ int gdbr_connect(libgdbr_t* instance, const char* host, int port) {
 	// TODO add config possibility here
 	char* message = "qSupported:multiprocess+;qRelocInsn+";
 	send_command(instance, message);
-	return 0;
+	return handle_connect(instance);
 }
 
 
@@ -119,6 +122,18 @@ int gdbr_write_memory(libgdbr_t* instance, uint64_t address, char* data, uint64_
 int gdbr_continue(libgdbr_t* instance) {
 	return send_command(instance, CMD_CONTINUE);
 }
+
+
+int gdbr_send_command(libgdbr_t* instance, char* command) {
+	char* cmd = calloc(strlen(command) * 2, sizeof(char));
+	char* txt_command = "qRcmd,";
+	strcpy(cmd, txt_command);
+	pack_hex(command, strlen(command), (cmd + strlen(txt_command)+1));
+	int ret = send_command(instance, cmd);
+	free(cmd);
+	if (ret == -1) return ret;
+	return handle_cmd(instance);
+}	
 
 
 int dump_message_stack(libgdbr_t* instance) {
@@ -174,7 +189,7 @@ int read_packet(libgdbr_t* instance) {
 		result = select(instance->fd + 1, &readset, NULL, NULL, &tv);
 		if (result > 0) {
 			if (FD_ISSET(instance->fd, &readset)) {
-				ret = recv(instance->fd, instance->read_buff + current_size, instance->read_buff, 0);
+				ret = recv(instance->fd, (instance->read_buff + current_size), instance->max_read_len, 0);
 				current_size += ret;
 			}
 		}

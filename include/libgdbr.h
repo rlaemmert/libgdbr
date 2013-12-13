@@ -35,13 +35,12 @@ typedef struct libgdbr_message_stack_t
  */
 typedef struct libgdbr_t 
 {
+
 	char* send_buff; // defines a buffer for reading and sending stuff
 	ssize_t max_send_len; // definses the maximal len for the given buffer
-
 	char* read_buff;
 	ssize_t max_read_len;
 
-	libgdbr_message_stack_t message_stack; // keeps the unhandled messages
 	// is already handled (i.e. already send or ...)
 	int fd; // Filedescriptor // TODO add r_socket stuff from radare
 	int connected;
@@ -51,6 +50,7 @@ typedef struct libgdbr_t
 	ssize_t data_max;
 	uint8_t architecture;
 	registers_t* registers;
+	libgdbr_message_stack_t message_stack; // keeps the unhandled messages
 } libgdbr_t;
 
 /*!

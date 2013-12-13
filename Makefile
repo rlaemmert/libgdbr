@@ -59,5 +59,8 @@ run_test: client
 gdb_test: client
 	LD_LIBRARY_PATH=./lib gdb ./test/client
 
+valgrind_test: client
+	LD_LIBRARY_PATH=./lib valgrind --track-origins=yes -v --leak-check=full ./test/client
+
 edit:
 	vim -c "args **/*.h **/*.c"

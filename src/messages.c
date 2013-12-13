@@ -24,9 +24,10 @@ int handle_g(libgdbr_t* instance) {
 	// printf("Msg: %s with len: %i\n", msg->msg, msg->len); //TODO Debug...
 	//instance->data = calloc((msg->len / 2), sizeof(char));
 	instance->data_len = (msg->len / 2);
-	
 	unpack_hex(msg->msg, msg->len, instance->data);
 	hexdump(instance->data, instance->data_len, 0);
+	instance->message_stack.count--;
+	free(msg->msg);
 	return 0;
 }
 
@@ -40,10 +41,37 @@ int handle_m(libgdbr_t* instance) {
 	libgdbr_message_t* msg = &instance->message_stack.message_stack[index];
 	//printf("Msg: %s with len: %i\n", msg->msg, msg->len); //TODO add debug flag here?
 	instance->data_len = (msg->len / 2);
-	
 	unpack_hex(msg->msg, msg->len, instance->data);
 	hexdump(instance->data, instance->data_len, 0);
 	instance->message_stack.count--; 
-
+	free(msg->msg);
 	return 0;
 }
+
+
+int handle_cmd(libgdbr_t* instance) {
+	printf("The last comand received: %i packets\n", instance->message_stack.count);
+	libgdbr_message_t* current = &instance->message_stack.message_stack[0];
+	while(current <= &instance->message_stack.message_stack[instance->message_stack.count	- 1]) {
+		char* result = calloc((current->len / 2 + 1), sizeof(char));
+		unpack_hex((current->msg + 1), current->len, result);
+		printf("Result: %s\n", result);
+		hexdump(result, current->len / 2, 0);
+		instance->message_stack.count--;
+		current++;
+	}
+	return 0;
+}
+
+
+int handle_connect(libgdbr_t* instance) {
+	printf("Connect Parameter:\n");
+	libgdbr_message_t* current = &instance->message_stack.message_stack[0];
+	while(current < &instance->message_stack.message_stack[instance->message_stack.count	- 1]) {
+		printf("Msg: %s\n", current->msg);
+		instance->message_stack.count--;
+		free(current->msg);
+	}
+	return 0;
+}
+

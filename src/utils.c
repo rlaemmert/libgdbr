@@ -71,7 +71,7 @@ int int2hex(int i) {
 
 int unpack_hex(char* src, uint64_t len, char* dst) {
 	int i = 0;
-	while (i < len / 2) {
+	while (i < (len / 2)) {
 		int val = hex2int(src[(i*2)]);
 		val <<= 4;
 		val |= hex2int(src[(i*2)+1]);

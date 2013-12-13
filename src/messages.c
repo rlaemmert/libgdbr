@@ -53,8 +53,8 @@ int handle_cmd(libgdbr_t* instance) {
 	printf("The last comand received: %i packets\n", instance->message_stack.count);
 	libgdbr_message_t* current = &instance->message_stack.message_stack[0];
 	while(current <= &instance->message_stack.message_stack[instance->message_stack.count	- 1]) {
-		char* result = calloc((current->len / 2 + 1), sizeof(char));
-		unpack_hex((current->msg + 1), current->len, result);
+		char* result = (char*) calloc((current->len / 2), sizeof(char));
+		unpack_hex((current->msg), current->len, result);
 		printf("Result: %s\n", result);
 		hexdump(result, current->len / 2, 0);
 		instance->message_stack.count--;
@@ -65,6 +65,11 @@ int handle_cmd(libgdbr_t* instance) {
 
 
 int handle_connect(libgdbr_t* instance) {
+	int index = instance->message_stack.count - 1;
+	if (index < 0) {
+		printf("No answer!\n");
+		return -1;
+	}
 	printf("Connect Parameter:\n");
 	libgdbr_message_t* current = &instance->message_stack.message_stack[0];
 	while(current < &instance->message_stack.message_stack[instance->message_stack.count	- 1]) {

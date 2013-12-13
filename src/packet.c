@@ -2,6 +2,7 @@
 
 
 char get_next_token(parsing_object_t* current) {
+	printf("%c ", current->buffer[current->position]);
 	return current->buffer[current->position++];
 }
 
@@ -45,6 +46,7 @@ void handle_packet(parsing_object_t* current) {
 		handle_data(current);
 	}
 	else if	(token == '+') {
+		printf("KLekse\n");
 		current->acks++;
 		handle_packet(current);
 	}

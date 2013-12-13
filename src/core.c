@@ -125,10 +125,10 @@ int gdbr_continue(libgdbr_t* instance) {
 
 
 int gdbr_send_command(libgdbr_t* instance, char* command) {
-	char* cmd = calloc(strlen(command) * 2, sizeof(char));
 	char* txt_command = "qRcmd,";
+	char* cmd = calloc((strlen(command) * 2 + strlen(txt_command) + 2), sizeof(char));
 	strcpy(cmd, txt_command);
-	pack_hex(command, strlen(command), (cmd + strlen(txt_command)+1));
+	pack_hex(command, strlen(command), (cmd + strlen(txt_command)));
 	int ret = send_command(instance, cmd);
 	free(cmd);
 	if (ret == -1) return ret;
@@ -195,6 +195,7 @@ int read_packet(libgdbr_t* instance) {
 		}
 	}
 	instance->data_len = current_size;
+	printf("%s\n", instance->read_buff);
 	parse_packet(instance);
 	return ret;
 }

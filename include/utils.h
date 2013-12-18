@@ -3,6 +3,7 @@
 #define UTILS_H
 
 #include <stdint.h>
+#include <stdio.h>
 
 
 uint8_t cmd_checksum(const char* command);

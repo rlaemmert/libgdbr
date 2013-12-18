@@ -9,7 +9,9 @@
 #ifndef MESSAGES_H
 #define MESSAGES_H
 
+#include <string.h>
 #include "libgdbr.h"
+#include "utils.h"
 
 int handle_g(libgdbr_t* instance);
 int handle_m(libgdbr_t* instance);

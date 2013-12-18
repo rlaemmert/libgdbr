@@ -25,7 +25,6 @@ typedef struct libgdbr_message_t
 typedef struct libgdbr_message_stack_t
 {
 	int count; 
-	libgdbr_message_t message_stack[128];	/*! Message stack itself (just a trivial array with 128 places */
 } libgdbr_message_stack_t;
 
 
@@ -35,18 +34,17 @@ typedef struct libgdbr_message_stack_t
  */
 typedef struct libgdbr_t 
 {
-
-	libgdbr_message_stack_t message_stack; // keeps the unhandled messages
 	char* send_buff; // defines a buffer for reading and sending stuff
-	ssize_t max_send_len; // definses the maximal len for the given buffer
+	ssize_t send_len; // definses the maximal len for the given buffer
 	char* read_buff;
-	ssize_t max_read_len;
+	ssize_t read_len;
+	ssize_t max_read_size;
 
 	// is already handled (i.e. already send or ...)
 	int fd; // Filedescriptor // TODO add r_socket stuff from radare
 	int connected;
 	int acks;
-	uint8_t* data;
+	char* data;
 	ssize_t data_len;
 	ssize_t data_max;
 	uint8_t architecture;
@@ -85,6 +83,6 @@ int gdbr_continue(libgdbr_t* instance);
 int gdbr_read_registers(libgdbr_t* instance);
 int gdbr_read_memory(libgdbr_t* instance, uint64_t address, uint64_t len);
 int gdbr_write_memory(libgdbr_t* instance, uint64_t address, char* data, uint64_t len);
-int gdbr_send_cmd(libgdbr_t* instance, char* command);
+int gdbr_send_command(libgdbr_t* instance, char* command);
 
 #endif

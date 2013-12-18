@@ -1,18 +1,19 @@
 #include "libgdbr.h"
 #include "core.h"
 #include "packet.h"
+#include "messages.h"
 
 
 int gdbr_init(libgdbr_t* instance, uint8_t architecture) {
 	//memset(instance,0, sizeof(libgdbr_t));
 	instance->send_buff = (char*) calloc(2500, sizeof(char));
-	instance->max_send_len = 2500;
+	instance->send_len = 2500;
 	instance->read_buff = (char*) calloc(2500, sizeof(char));
-	instance->max_read_len = 2500;
+	instance->read_len = 2500;
+	instance->max_read_size = 2500;
 	instance->connected = 0;
 	instance->data_len = 0;
 	instance->data = calloc(4096, sizeof(char));
-	printf("0x%16llx\n", instance->data);
 	instance->data_max = 4096;
 	instance->architecture = architecture;
 	//if (architecture == ARCH_X86_64) instance->registers = x86_64;
@@ -23,16 +24,11 @@ int gdbr_init(libgdbr_t* instance, uint8_t architecture) {
 
 
 int gdbr_cleanup(libgdbr_t* instance) {
-	int i;
-	for (i = 0 ; i < instance->message_stack.count ; i++) {
-		free(instance->message_stack.message_stack[i].msg);
-	}
-	printf("0x%16llx\n", instance->data);
 	free(instance->data);
 	free(instance->send_buff);
-	instance->max_send_len = 0;
+	instance->send_len = 0;
 	free(instance->read_buff);
-	instance->max_read_len = 0;
+	instance->read_len = 0;
 	return 0;
 }
 
@@ -41,7 +37,7 @@ int gdbr_connect(libgdbr_t* instance, const char* host, int port) {
 	int	fd;
 	int	connected;
 	struct protoent		*protocol;
-	struct hostend		*hostaddr;
+	struct hostent		*hostaddr;
 	struct sockaddr_in	socketaddr;
 	
 	protocol = getprotobyname("tcp");
@@ -60,7 +56,7 @@ int gdbr_connect(libgdbr_t* instance, const char* host, int port) {
 	memset(&socketaddr, 0, sizeof(socketaddr));
 	socketaddr.sin_family = AF_INET;
 	socketaddr.sin_port = htons(port);
-	hostaddr = gethostbyname(host);
+	hostaddr = (struct hostent *)gethostbyname(host);
 
 	if (!hostaddr) {
 		printf("Error host\n");
@@ -99,7 +95,7 @@ int gdbr_read_registers(libgdbr_t* instance) {
 
 int gdbr_read_memory(libgdbr_t* instance, uint64_t address, uint64_t len) {
 	char command[255] = {};
-	int ret = snprintf(command, 255, "m%016llx,%lld", address, len);
+	int ret = snprintf(command, 255, "m%016lx,%ld", address, len);
 	send_command(instance, command);
 	if (ret == -1) return ret;
 	return handle_m(instance);
@@ -108,7 +104,7 @@ int gdbr_read_memory(libgdbr_t* instance, uint64_t address, uint64_t len) {
 
 int gdbr_write_memory(libgdbr_t* instance, uint64_t address, char* data, uint64_t len) {
 	char command[255] = {};
-	snprintf(command, 255, "M%016llx,%lld:", address, len);
+	snprintf(command, 255, "M%016lx,%ld:", address, len);
 	int command_len = strlen(command);
 	char* tmp = calloc(command_len + (len * 2), sizeof(char));
 	memcpy(tmp, command, command_len);
@@ -136,18 +132,9 @@ int gdbr_send_command(libgdbr_t* instance, char* command) {
 }	
 
 
-int dump_message_stack(libgdbr_t* instance) {
-	libgdbr_message_t* current = &instance->message_stack.message_stack[0];
-	while(current <= &instance->message_stack.message_stack[instance->message_stack.count	- 1]) {
-		printf("Msg: %s\n", current->msg);
-		current++;
-	}
-}
-
-
 int send_command(libgdbr_t* instance, char* command) {
 	uint8_t checksum = cmd_checksum(command);
-	int ret = snprintf(instance->send_buff, instance->max_send_len, "$%s#%.2x", command, checksum);
+	int ret = snprintf(instance->send_buff, instance->send_len, "$%s#%.2x", command, checksum);
 	if (ret == -1) {
 		return -1;
 	}
@@ -163,7 +150,7 @@ int send_packet(libgdbr_t* instance) {
 		return -1;
 	}
 	printf("Sending: %s\n", instance->send_buff);
-	int ret = send(instance->fd, instance->send_buff, instance->data_len, 0);
+	send(instance->fd, instance->send_buff, instance->data_len, 0);
 	read_packet(instance); // TODO handle the size of the answer in some kind?
 	return 0;
 }
@@ -177,7 +164,6 @@ int read_packet(libgdbr_t* instance) {
 	}
 	int ret = 0;
 	int current_size = 0;
-	int i;
 	fd_set readset;
 	struct timeval tv;
 	tv.tv_sec = 1;
@@ -189,13 +175,16 @@ int read_packet(libgdbr_t* instance) {
 		result = select(instance->fd + 1, &readset, NULL, NULL, &tv);
 		if (result > 0) {
 			if (FD_ISSET(instance->fd, &readset)) {
-				ret = recv(instance->fd, (instance->read_buff + current_size), instance->max_read_len, 0);
+				if ( instance->read_len <= (current_size + instance->max_read_size)) {
+					instance->read_buff = realloc(instance->read_buff, instance->read_len + instance->max_read_size);
+					instance->read_len += instance->max_read_size;
+				}
+				ret = recv(instance->fd, (instance->read_buff + current_size), instance->max_read_size, 0);
 				current_size += ret;
 			}
 		}
 	}
 	instance->data_len = current_size;
-	printf("%s\n", instance->read_buff);
 	parse_packet(instance);
 	return ret;
 }

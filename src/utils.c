@@ -58,6 +58,7 @@ int hex2int(int ch) {
 	return -1;
 }
 
+
 /**
  * Converts a given nibble (4bit) into its hex representation
  * @returns hex char or -1 on error
@@ -67,6 +68,26 @@ int int2hex(int i) {
 	if (i >= 10 && i <= 15) return i + 55;
 	return -1;
 }
+
+
+char hex2char(char* hex) {
+	uint8_t result = hex2int((int)hex[0]);
+	result <<= 4;
+	result |= hex2int(hex[1]);
+	return (char) result;
+}
+
+
+//int unpack_hex(char* src, uint64_t len, char* dst) {
+//	int i = 0;
+//	int x = 0;
+//	while ( i < len) {
+//		dst[x++] = hex2char(src + i);
+//		i += 2;
+//	}
+//	dst[x] = '\0';
+//	return len;
+//}
 
 
 int unpack_hex(char* src, uint64_t len, char* dst) {
@@ -112,7 +133,7 @@ void hexdump(void* ptr, uint64_t len, uint64_t offset) {
 		}while (++x % 16 && x < len);
 
 		*c = '\0';
-		printf("0x%016llx: %-48s- %s\n", (curr_offset), hex, txt);
+		printf("0x%016lx: %-48s- %s\n", (curr_offset), hex, txt);
 	}
 }
 

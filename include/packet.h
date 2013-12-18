@@ -4,6 +4,8 @@
 
 #include <stdint.h>
 #include <unistd.h>
+#include <string.h>
+#include <stdlib.h>
 #include "libgdbr.h"
 
 typedef struct parsing_object_t
@@ -19,8 +21,6 @@ typedef struct parsing_object_t
 
 
 int parse_packet(libgdbr_t* instance);
-int push_message(libgdbr_t* instance, parsing_object_t* parsed);
-char* pop_message(libgdbr_t* instance);
 void handle_data(parsing_object_t* current);
 void handle_chk(parsing_object_t* current);
 void handle_packet(parsing_object_t* current);

@@ -5,7 +5,7 @@
 
 
 int gdbr_init(libgdbr_t* instance, uint8_t architecture) {
-	//memset(instance,0, sizeof(libgdbr_t));
+	memset(instance,0, sizeof(libgdbr_t));
 	instance->send_buff = (char*) calloc(2500, sizeof(char));
 	instance->send_len = 2500;
 	instance->read_buff = (char*) calloc(2500, sizeof(char));

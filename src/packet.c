@@ -67,13 +67,8 @@ int parse_packet(libgdbr_t* instance) {
 			instance->data_max += current_size;
 		}
 		memcpy(instance->data + target_pos , new.buffer + new.start, current_size);
-		char* tmp = calloc(current_size, sizeof(char));
-		memcpy(tmp, new.buffer + new.start, current_size);
-		printf("LINE: %s\n", tmp);
 		target_pos += current_size;
 	}
 	instance->data[instance->data_len] = '\0';
-	printf("Result: %s\n", instance->data);
-	// TODO check if its possible that gdbserver sends multiple acks in 1 packet
 	return 0;
 }

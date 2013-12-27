@@ -33,8 +33,8 @@ int handle_m(libgdbr_t* instance) {
 
 
 int handle_cmd(libgdbr_t* instance) {
+	unpack_hex(instance->data, strlen(instance->data), instance->data);
 	hexdump(instance->data, strlen(instance->data), 0);
-	unpack_hex(instance->data + 1, strlen(instance->data), instance->data);
 	instance->data_len = strlen(instance->data) / 2;
 	return 0;
 }

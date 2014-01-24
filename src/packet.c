@@ -52,7 +52,7 @@ void handle_packet(parsing_object_t* current) {
 }
 
 
-int parse_packet(libgdbr_t* instance) {
+int parse_packet(libgdbr_t* instance, int data_offset) {
 	parsing_object_t new;
 	memset(&new, 0, sizeof(parsing_object_t));
 	new.length = instance->data_len;
@@ -60,6 +60,7 @@ int parse_packet(libgdbr_t* instance) {
 	uint64_t target_pos = 0;
 	while(new.position < new.length) {
 		handle_packet(&new);
+		new.start += data_offset;
 		uint64_t current_size = new.end - new.start;
 		if ( instance->data_max <= (instance->data_len + current_size)) {
 			instance->data = realloc(instance->data, instance->data_len + current_size + 1);
@@ -71,4 +72,50 @@ int parse_packet(libgdbr_t* instance) {
 	}
 	instance->data[instance->data_len] = '\0';
 	return 0;
+}
+
+
+int send_packet(libgdbr_t* instance) {
+	if (!instance) {
+		// TODO corect error handling here
+		printf("Initialize libgdbr_t first\n");
+		return -1;
+	}
+	printf("Sending: %s\n", instance->send_buff);
+	int ret = send(instance->fd, instance->send_buff, instance->data_len, 0);
+	printf("send_ret: %d\n", ret);
+	return 0;
+}
+
+
+int read_packet(libgdbr_t* instance) {
+	if (!instance) {
+		// TODO correct error handling here
+		printf("Initialize libgdbr_t first\n");
+		return -1;
+	}
+	int ret = 0;
+	int current_size = 0;
+	fd_set readset;
+	struct timeval tv;
+	tv.tv_sec = 1;
+	tv.tv_usec = 0;
+	int result = 1;
+	while (result > 0) {
+		FD_ZERO(&readset);
+		FD_SET(instance->fd, &readset);
+		result = select(instance->fd + 1, &readset, NULL, NULL, &tv);
+		if (result > 0) {
+			if (FD_ISSET(instance->fd, &readset)) {
+				if ( instance->read_len <= (current_size + instance->max_read_size)) {
+					instance->read_buff = realloc(instance->read_buff, instance->read_len + instance->max_read_size);
+					instance->read_len += instance->max_read_size;
+				}
+				ret = recv(instance->fd, (instance->read_buff + current_size), instance->max_read_size, 0);
+				current_size += ret;
+			}
+		}
+	}
+	instance->data_len = current_size;
+	return ret;
 }

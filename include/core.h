@@ -29,25 +29,4 @@ static int ARCH_X86_32 = 1;
  */
 int send_command(libgdbr_t* instance, char* command);
 
-/*!
- * \brief sends a packet sends a packet to the established connection
- * \param instance the "instance" of the current libgdbr session
- * \returns a failure code (currently -1) or 0 if call successfully
- */
-int send_packet(libgdbr_t* instance);
-
-/*!
- * \brief Function reads data from the established connection
- * \param instance the "instance" of the current libgdbr session
- * \returns a failure code (currently -1) or 0 if call successfully
- */
-int read_packet(libgdbr_t* instance);
-
-/*!
- * \brief dumps the whole message stack
- * \param instance the "instance" of the current libgdbr session
- * \returns a failure code (currently -1) or 0 if call successfully
- */ 
-int dump_message_stack(libgdbr_t* instance);
-
 #endif

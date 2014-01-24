@@ -20,7 +20,20 @@ typedef struct parsing_object_t
 } parsing_object_t;
 
 
-int parse_packet(libgdbr_t* instance);
+int parse_packet(libgdbr_t* instance, int data_offset);
+/*!
+ * \brief sends a packet sends a packet to the established connection
+ * \param instance the "instance" of the current libgdbr session
+ * \returns a failure code (currently -1) or 0 if call successfully
+ */
+int send_packet(libgdbr_t* instance);
+
+/*!
+ * \brief Function reads data from the established connection
+ * \param instance the "instance" of the current libgdbr session
+ * \returns a failure code (currently -1) or 0 if call successfully
+ */
+int read_packet(libgdbr_t* instance);
 void handle_data(parsing_object_t* current);
 void handle_chk(parsing_object_t* current);
 void handle_packet(parsing_object_t* current);

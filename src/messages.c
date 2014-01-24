@@ -5,8 +5,6 @@
 
 
 int handle_g(libgdbr_t* instance) {
-	printf("%s\n", instance->data);
-	
 	int len = strlen(instance->data);
 	int i = 0;
 	while(len > 0) {
@@ -34,7 +32,7 @@ int handle_m(libgdbr_t* instance) {
 
 int handle_cmd(libgdbr_t* instance) {
 	unpack_hex(instance->data, strlen(instance->data), instance->data);
-	hexdump(instance->data, strlen(instance->data), 0);
+	printf("Answer: %s\n", instance->data); 
 	instance->data_len = strlen(instance->data) / 2;
 	return 0;
 }

@@ -78,30 +78,6 @@ char hex2char(char* hex) {
 }
 
 
-//int unpack_hex(char* src, uint64_t len, char* dst) {
-//	int i = 0;
-//	int x = 0;
-//	while ( i < len) {
-//		dst[x++] = hex2char(src + i);
-//		i += 2;
-//	}
-//	dst[x] = '\0';
-//	return len;
-//}
-
-
-/**
- * Dirty workaround for leeding zero char hex bullshit...
- *
- */
-int unpack_hexstr(char* src, uint64_t len, char* dst) {
-	int i;
-	for ( i = 0; i < len; i++) {
-	
-	}
-	return 0;
-}
-
 int unpack_hex(char* src, uint64_t len, char* dst) {
 	int i = 0;
 	while (i < (len / 2)) {

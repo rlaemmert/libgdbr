@@ -14,8 +14,7 @@ int handle_g(libgdbr_t* instance) {
 	}
 	instance->data_len = strlen(instance->data) / 2;
 	unpack_hex(instance->data, strlen(instance->data), instance->data);
-	hexdump(instance->data, instance->data_len, 0);
-	instance->data_len = 0;
+	//instance->data_len = 0;
 	return 0;
 }
 
@@ -25,7 +24,7 @@ int handle_m(libgdbr_t* instance) {
 	instance->data_len = strlen(instance->data) / 2;
 	unpack_hex(instance->data, len, instance->data);
 	hexdump(instance->data, instance->data_len, 0);
-	instance->data_len = 0;
+	//instance->data_len = 0;
 	return 0;
 }
 
@@ -39,18 +38,6 @@ int handle_cmd(libgdbr_t* instance) {
 
 
 int handle_connect(libgdbr_t* instance) {
-//	int index = instance->message_stack.count - 1;
-//	if (index < 0) {
-//		printf("No answer!\n");
-//		return -1;
-//	}
-//	printf("Connect Parameter:\n");
-//	libgdbr_message_t* current = &instance->message_stack.message_stack[0];
-//	while(current < &instance->message_stack.message_stack[instance->message_stack.count	- 1]) {
-//		printf("Msg: %s\n", current->msg);
-//		instance->message_stack.count--;
-//		free(current->msg);
-//	}
 	return 0;
 }
 

@@ -6,7 +6,9 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/socket.h>
 #include "libgdbr.h"
+#include <stdio.h>
 
 typedef struct parsing_object_t
 {

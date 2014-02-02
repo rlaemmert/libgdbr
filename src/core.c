@@ -86,7 +86,7 @@ int gdbr_disconnect(libgdbr_t* instance) {
 
 
 int gdbr_read_registers(libgdbr_t* instance) {
-	send_command(instance, CMD_READREG);
+	send_command(instance, CMD_READREGS);
 	int read_len = read_packet(instance);
 	if ( read_len > 0) {
 		parse_packet(instance, 0);
@@ -130,6 +130,7 @@ int gdbr_write_memory(libgdbr_t* instance, uint64_t address, char* data, uint64_
 }
 
 
+
 int gdbr_continue(libgdbr_t* instance) {
 	return send_command(instance, CMD_CONTINUE);
 }
@@ -151,6 +152,14 @@ int gdbr_send_command(libgdbr_t* instance, char* command) {
 	}
 	return -1;
 }	
+
+
+int test_command(libgdbr_t* instance, char* command) {
+	send_command(instance, command);
+	read_packet(instance);
+	hexdump(instance->read_buff, instance->data_len, 0);
+	return 0;
+}
 
 
 int send_command(libgdbr_t* instance, char* command) {

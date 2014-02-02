@@ -2,7 +2,6 @@
 
 
 char get_next_token(parsing_object_t* current) {
-	printf("%c ", current->buffer[current->position]);
 	return current->buffer[current->position++];
 }
 
@@ -81,10 +80,8 @@ int send_packet(libgdbr_t* instance) {
 		printf("Initialize libgdbr_t first\n");
 		return -1;
 	}
-	printf("Sending: %s\n", instance->send_buff);
 	int ret = send(instance->fd, instance->send_buff, instance->data_len, 0);
-	printf("send_ret: %d\n", ret);
-	return 0;
+	return ret;
 }
 
 
@@ -98,8 +95,8 @@ int read_packet(libgdbr_t* instance) {
 	int current_size = 0;
 	fd_set readset;
 	struct timeval tv;
-	tv.tv_sec = 1;
-	tv.tv_usec = 0;
+	tv.tv_sec = 0;
+	tv.tv_usec = 100*1000;
 	int result = 1;
 	while (result > 0) {
 		FD_ZERO(&readset);

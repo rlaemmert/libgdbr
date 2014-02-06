@@ -15,8 +15,11 @@
 #include "utils.h"
 #include "arch.h"
 
-#define CMD_CONTINUE "c"
-#define CMD_READREGS  "g"
+#define CMD_CONTINUE	"c"
+#define CMD_READREGS	"g"
+#define CMD_WRITEREGS	"G"
+#define CMD_WRITEMEM	"M"
+#define CMD_READMEM		"m"
 
 
 /*!

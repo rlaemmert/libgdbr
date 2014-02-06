@@ -108,7 +108,7 @@ int gdbr_read_registers(libgdbr_t* instance) {
 
 int gdbr_read_memory(libgdbr_t* instance, uint64_t address, uint64_t len) {
 	char command[255] = {};
-	int ret = snprintf(command, 255, "m%016lx,%ld", address, len);
+	int ret = snprintf(command, 255, "%s%016lx,%ld", CMD_READMEM, address, len);
 	send_command(instance, command);
 	if (ret < 0) return ret;
 
@@ -123,7 +123,7 @@ int gdbr_read_memory(libgdbr_t* instance, uint64_t address, uint64_t len) {
 
 int gdbr_write_memory(libgdbr_t* instance, uint64_t address, char* data, uint64_t len) {
 	char command[255] = {};
-	snprintf(command, 255, "M%016lx,%ld:", address, len);
+	snprintf(command, 255, "%s%016lx,%ld:", CMD_WRITEMEM, address, len);
 	int command_len = strlen(command);
 	char* tmp = calloc(command_len + (len * 2), sizeof(char));
 	memcpy(tmp, command, command_len);
@@ -168,7 +168,6 @@ int gdbr_write_registers(libgdbr_t* instance, char* registers) {
 	// read current register set
 	gdbr_read_registers(instance);
 
-	hexdump(instance->data, instance->data_len, 0);
 	int len = strlen(registers);
 	char* buff = calloc(len, sizeof(char));
 	memcpy(buff, registers, len);
@@ -205,7 +204,6 @@ int gdbr_write_registers(libgdbr_t* instance, char* registers) {
 					instance->data[offset + register_size - x - 1] = hex2char(&value[x * 2]);
 					x++;
 				}
-				hexdump(instance->data, instance->data_len, 0);
 				free(value);
 			}
 			i++;
@@ -217,7 +215,7 @@ int gdbr_write_registers(libgdbr_t* instance, char* registers) {
 
 	uint64_t buffer_size = instance->data_len * 2 + 8;
 	char* command = calloc(buffer_size, sizeof(char));
-	snprintf(command, buffer_size, "G");
+	snprintf(command, buffer_size, "%s", CMD_WRITEREGS);
 	pack_hex(instance->data, instance->data_len, command+1);
 	send_command(instance, command);
 	free(command);

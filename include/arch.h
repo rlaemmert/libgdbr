@@ -2,6 +2,9 @@
 #ifndef ARCH_H
 #define ARCH_H
 
+#define ARCH_X86_64 0
+#define ARCH_X86_32 1
+
 /*!
  * This struct defines a generic
  * register view

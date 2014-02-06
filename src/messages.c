@@ -8,8 +8,10 @@ int handle_g(libgdbr_t* instance) {
 	//int len = strlen(instance->data);
 	//int i = 0;
 	//while(len > 0) {
-	//	printf("reg[%i] %s = ", i, x86_64[i].name);
-	//	printf("%016lx\n", unpack_uint64_co ((instance->data + x86_64[i].offset * 2), x86_64[i].size * 2));
+	//	uint64_t current_val = unpack_uint64_co ((instance->data + instance->registers[i].offset * 2), instance->registers[i].size * 2);
+	//	printf("reg[%i] %s = ", instance->registers[i].offset, instance->registers[i].name);
+	//	printf("%016lx\n", current_val);
+	//	instance->registers[i].value = current_val;
 	//	len -= x86_64[i++].size * 2;
 	//}
 	instance->data_len = strlen(instance->data) / 2;

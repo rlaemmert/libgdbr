@@ -16,9 +16,7 @@
 #include "arch.h"
 
 #define CMD_CONTINUE "c"
-#define CMD_READREG  "g"
-static int ARCH_X86_64 = 0;
-static int ARCH_X86_32 = 1;
+#define CMD_READREGS  "g"
 
 
 /*!

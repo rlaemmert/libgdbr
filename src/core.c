@@ -16,6 +16,16 @@ int gdbr_init(libgdbr_t* instance, uint8_t architecture) {
 	instance->data = calloc(4096, sizeof(char));
 	instance->data_max = 4096;
 	instance->architecture = architecture;
+	switch (architecture) {
+		case ARCH_X86_32:
+			instance->registers = x86_32;
+			break;
+		case ARCH_X86_64:
+			instance->registers = x86_64;
+			break;
+		default:
+			printf("Error unknown architecture set\n");
+	}
 	return 0; 
 }
 
@@ -130,7 +140,6 @@ int gdbr_write_memory(libgdbr_t* instance, uint64_t address, char* data, uint64_
 }
 
 
-
 int gdbr_continue(libgdbr_t* instance) {
 	return send_command(instance, CMD_CONTINUE);
 }
@@ -152,6 +161,68 @@ int gdbr_send_command(libgdbr_t* instance, char* command) {
 	}
 	return -1;
 }	
+
+
+int gdbr_write_registers(libgdbr_t* instance, char* registers) {
+	int ret = 0;
+	// read current register set
+	gdbr_read_registers(instance);
+
+	hexdump(instance->data, instance->data_len, 0);
+	int len = strlen(registers);
+	char* buff = calloc(len, sizeof(char));
+	memcpy(buff, registers, len);
+	char* reg = strtok(buff, ",");
+	while ( reg != NULL ) {
+		char* name_end = strchr(reg, '=');
+		if (name_end == NULL) {
+			printf("Malformed argument: %s\n", reg);
+			free(buff);
+			return -1;
+		}
+		*name_end = '\0'; // change '=' to '\0'
+
+		// time to find the current register
+		int i = 0;
+		while ( instance->registers[i].size > 0) {
+			if (strcmp(instance->registers[i].name, reg) == 0) {
+
+				uint64_t register_size = instance->registers[i].size;
+				uint64_t offset = instance->registers[i].offset;
+
+				char* value = calloc(register_size * 2, sizeof(char));
+
+				memset(value, '0', register_size * 2);
+								
+				name_end++; 
+				// be able to take hex with and without 0x
+				if (name_end[1] == 'x' || name_end[1] == 'X') name_end += 2;
+				int val_len = strlen(name_end); // size of the rest
+				strcpy(value+(register_size * 2 - val_len), name_end);
+
+				int x = 0;
+				while (x < register_size) {
+					instance->data[offset + register_size - x - 1] = hex2char(&value[x * 2]);
+					x++;
+				}
+				hexdump(instance->data, instance->data_len, 0);
+				free(value);
+			}
+			i++;
+		}
+		reg = strtok(NULL, " ,");
+	}
+
+	free(buff);
+
+	uint64_t buffer_size = instance->data_len * 2 + 8;
+	char* command = calloc(buffer_size, sizeof(char));
+	snprintf(command, buffer_size, "G");
+	pack_hex(instance->data, instance->data_len, command+1);
+	send_command(instance, command);
+	free(command);
+	return 0;
+}
 
 
 int test_command(libgdbr_t* instance, char* command) {

@@ -7,6 +7,10 @@
 
 #include "arch.h"
 
+static int X86_64 = ARCH_X86_64;
+static int X86_32 = ARCH_X86_32;
+
+
 
 /*! 
  * Structure that saves a gdb message
@@ -81,6 +85,16 @@ int gdbr_disconnect(libgdbr_t* instance);
 // Commands
 int gdbr_continue(libgdbr_t* instance);
 int gdbr_read_registers(libgdbr_t* instance);
+
+/*!
+ * \brief Function writes general purpose registers
+ * \param gdbr instance that contains the current context
+ * \param reg contains the registers that should be written
+ * reg contains a comma separated string that uses <regname>=value,<regname>=value
+ * i.e. eax=0x123,ebx=0x234
+ * \returns a failurre code (currently -1) or 0 if call successfully
+ */
+int gdbr_write_registers(libgdbr_t* instance, char* registers);
 int gdbr_read_memory(libgdbr_t* instance, uint64_t address, uint64_t len);
 int gdbr_write_memory(libgdbr_t* instance, uint64_t address, char* data, uint64_t len);
 int gdbr_send_command(libgdbr_t* instance, char* command);

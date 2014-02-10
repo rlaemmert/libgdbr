@@ -38,6 +38,7 @@ prepare:
 
 lib: prepare $(SRC_O)
 	$(LD) -shared -Wl,-soname,$(LIBNAME).so -o $(LIB)/$(LIBNAME).so $(SRC_O)
+	ar rvs $(LIB)/$(LIBNAME).a $(SRC_O)
 
 clean:
 	-rm $(SRC_O)

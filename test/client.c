@@ -3,7 +3,8 @@
 
 int main() {
 	libgdbr_t gdb = {};
-	gdbr_init(&gdb, X86_64);
+	gdbr_init(&gdb);
+	gdbr_set_architecture(&gdb, X86_64);
 	//char buffer[2500];
 	if(gdbr_connect(&gdb, "localhost", 1234) == -1) {
 		printf("Error connecting to target\n");
@@ -28,3 +29,4 @@ int main() {
 	gdbr_cleanup(&gdb);
 	return 0;
 }
+

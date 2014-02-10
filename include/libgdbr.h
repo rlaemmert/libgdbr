@@ -57,10 +57,16 @@ typedef struct libgdbr_t
 
 /*!
  * \brief Function initializes the libgdbr lib
- * \param architecture defines the architecure used (registersize, and such)
  * \returns a failure code (currently -1) or 0 if call successfully
  */
-int gdbr_init(libgdbr_t* instance, uint8_t architecture);
+int gdbr_init(libgdbr_t* instance);
+
+/*!
+ * \brief Function initializes the architecture of the gdbsession
+ * \param architecture defines the architecure used (registersize, and such)
+ * \returns a failure code
+ */
+int gdbr_set_architecture(libgdbr_t* instance, uint8_t architecture);
 
 /*!
  * \brief frees all buffers and cleans the libgdbr instance stuff

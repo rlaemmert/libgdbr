@@ -4,7 +4,7 @@
 #include "messages.h"
 
 
-int gdbr_init(libgdbr_t* instance, uint8_t architecture) {
+int gdbr_init(libgdbr_t* instance) {
 	memset(instance,0, sizeof(libgdbr_t));
 	instance->send_buff = (char*) calloc(2500, sizeof(char));
 	instance->send_len = 2500;
@@ -15,6 +15,11 @@ int gdbr_init(libgdbr_t* instance, uint8_t architecture) {
 	instance->data_len = 0;
 	instance->data = calloc(4096, sizeof(char));
 	instance->data_max = 4096;
+	return 0; 
+}
+
+
+int gdbr_set_architecture(libgdbr_t* instance, uint8_t architecture) {
 	instance->architecture = architecture;
 	switch (architecture) {
 		case ARCH_X86_32:
@@ -26,7 +31,7 @@ int gdbr_init(libgdbr_t* instance, uint8_t architecture) {
 		default:
 			printf("Error unknown architecture set\n");
 	}
-	return 0; 
+	return 0;
 }
 
 

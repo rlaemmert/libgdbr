@@ -145,16 +145,20 @@ int gdbr_write_memory(libgdbr_t* instance, uint64_t address, char* data, uint64_
 }
 
 
-int gdbr_continue(libgdbr_t* instance) {
-	return send_command(instance, CMD_CONTINUE);
+int gdbr_step(libgdbr_t* instance, int thread_id) {
+	return send_vcont(instance, CMD_C_STEP, thread_id);
+}
+
+
+int gdbr_continue(libgdbr_t* instance, int thread_id) {
+	return send_vcont(instance, CMD_C_CONT, thread_id);
 }
 
 
 int gdbr_send_command(libgdbr_t* instance, char* command) {
-	char* txt_command = "qRcmd,";
-	char* cmd = calloc((strlen(command) * 2 + strlen(txt_command) + 2), sizeof(char));
-	strcpy(cmd, txt_command);
-	pack_hex(command, strlen(command), (cmd + strlen(txt_command)));
+	char* cmd = calloc((strlen(command) * 2 + strlen(CMD_QRCMD) + 2), sizeof(char));
+	strcpy(cmd, CMD_QRCMD);
+	pack_hex(command, strlen(command), (cmd + strlen(CMD_QRCMD)));
 	int ret = send_command(instance, cmd);
 	free(cmd);
 	if (ret < 0) return ret;
@@ -166,6 +170,20 @@ int gdbr_send_command(libgdbr_t* instance, char* command) {
 	}
 	return -1;
 }	
+
+
+int gdbr_write_bin_registers(libgdbr_t* instance, char* registers) {
+	gdbr_read_registers(instance);
+	hexdump(instance->data, instance->data_len, 0);
+	hexdump(registers, 500, 0);
+	uint64_t buffer_size = strlen(registers) + 2;
+	char* command = calloc(buffer_size, sizeof(char));
+	snprintf(command, buffer_size, "%s", CMD_WRITEREGS);
+	strcpy(command+1, registers);
+	send_command(instance, command);
+	free(command);
+	return 0;
+}
 
 
 int gdbr_write_registers(libgdbr_t* instance, char* registers) {
@@ -223,7 +241,9 @@ int gdbr_write_registers(libgdbr_t* instance, char* registers) {
 	snprintf(command, buffer_size, "%s", CMD_WRITEREGS);
 	pack_hex(instance->data, instance->data_len, command+1);
 	send_command(instance, command);
+	read_packet(instance);
 	free(command);
+	handle_G(instance);
 	return 0;
 }
 
@@ -235,6 +255,28 @@ int test_command(libgdbr_t* instance, char* command) {
 	return 0;
 }
 
+
+int send_vcont(libgdbr_t* instance, char* command, int thread_id) {
+	char tmp[255] = {};
+	int ret = snprintf(tmp, 255, "%s;%s:%x", CMD_C, command, thread_id);
+	send_command(instance, tmp);
+	if (ret < 0) return ret;
+
+	int read_len = read_packet(instance);
+	if (read_len > 0) { 
+		parse_packet(instance, 0);
+		return handle_cont(instance);
+	}
+	return 0;
+}
+
+
+int send_ack(libgdbr_t* instance) {
+	instance->send_buff[0] = '+';
+	instance->data_len = 1;
+	send_packet(instance);
+	return 0;
+}
 
 int send_command(libgdbr_t* instance, char* command) {
 	uint8_t checksum = cmd_checksum(command);

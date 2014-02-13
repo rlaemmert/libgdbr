@@ -16,6 +16,7 @@
 int handle_g(libgdbr_t* instance);
 int handle_m(libgdbr_t* instance);
 int handle_cmd(libgdbr_t* instance);
+int handle_cont(libgdbr_t* instance);
 int handle_connect(libgdbr_t* instance);
 
 #endif

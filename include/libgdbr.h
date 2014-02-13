@@ -89,7 +89,8 @@ int gdbr_connect(libgdbr_t* instance, const char* server, int port);
 int gdbr_disconnect(libgdbr_t* instance);
 
 // Commands
-int gdbr_continue(libgdbr_t* instance);
+int gdbr_continue(libgdbr_t* instance, int thread_id);
+int gdbr_step(libgdbr_t* instance, int thread_id);
 int gdbr_read_registers(libgdbr_t* instance);
 
 /*!
@@ -100,6 +101,7 @@ int gdbr_read_registers(libgdbr_t* instance);
  * i.e. eax=0x123,ebx=0x234
  * \returns a failurre code (currently -1) or 0 if call successfully
  */
+int gdbr_write_bin_registers(libgdbr_t* instance, char* registers);
 int gdbr_write_registers(libgdbr_t* instance, char* registers);
 int gdbr_read_memory(libgdbr_t* instance, uint64_t address, uint64_t len);
 int gdbr_write_memory(libgdbr_t* instance, uint64_t address, char* data, uint64_t len);

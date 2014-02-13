@@ -23,8 +23,9 @@ int main() {
 	//gdbr_read_memory(&gdb, 0xfffff880017435f, 800);
 	//gdbr_send_command(&gdb, "info registers");
 	gdbr_write_registers(&gdb, "rax=fffff8002a5145c8,xmm0=1337133713371337,xmm1=0x123123123123123");
-	//gdbr_send_command(&gdb, "info mem");
-	//gdbr_continue(&gdb);
+	gdbr_send_command(&gdb, "info mem");
+	//gdbr_continue(&gdb, -1);
+	//gdbr_step(&gdb, -1);
 	gdbr_disconnect(&gdb);
 	gdbr_cleanup(&gdb);
 	return 0;

@@ -1,5 +1,5 @@
-# libgdbr - Library that handles all remote communication with gdb
-`
+## libgdbr - Library that handles all remote communication with gdb
+```
 #include <stdio.h>
 #include "libgdbr.h"
 
@@ -19,4 +19,5 @@ int main() {
 	gdbr_cleanup(&gdb);
 	return 0;
 }
-`
+```
+

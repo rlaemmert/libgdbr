@@ -40,6 +40,7 @@ typedef struct libgdbr_t
 {
 	char* send_buff; // defines a buffer for reading and sending stuff
 	ssize_t send_len; // definses the maximal len for the given buffer
+	ssize_t send_max; // definses the maximal len for the given buffer
 	char* read_buff;
 	ssize_t read_len;
 	ssize_t max_read_size;

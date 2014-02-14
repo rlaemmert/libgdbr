@@ -7,7 +7,8 @@
 int gdbr_init(libgdbr_t* instance) {
 	memset(instance,0, sizeof(libgdbr_t));
 	instance->send_buff = (char*) calloc(2500, sizeof(char));
-	instance->send_len = 2500;
+	instance->send_len = 0;
+	instance->send_max = 2500;
 	instance->read_buff = (char*) calloc(2500, sizeof(char));
 	instance->read_len = 2500;
 	instance->max_read_size = 2500;
@@ -273,18 +274,18 @@ int send_vcont(libgdbr_t* instance, char* command, int thread_id) {
 
 int send_ack(libgdbr_t* instance) {
 	instance->send_buff[0] = '+';
-	instance->data_len = 1;
+	instance->send_len = 1;
 	send_packet(instance);
 	return 0;
 }
 
 int send_command(libgdbr_t* instance, char* command) {
 	uint8_t checksum = cmd_checksum(command);
-	int ret = snprintf(instance->send_buff, instance->send_len, "$%s#%.2x", command, checksum);
+	int ret = snprintf(instance->send_buff, instance->send_max, "$%s#%.2x", command, checksum);
 	if (ret < 0) {
 		return ret;
 	}
-	instance->data_len = ret;
+	instance->send_len = ret;
 	return send_packet(instance);
 }
 

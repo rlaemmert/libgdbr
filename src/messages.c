@@ -14,8 +14,10 @@ int handle_g(libgdbr_t* instance) {
 	//	instance->registers[i].value = current_val;
 	//	len -= x86_64[i++].size * 2;
 	//}
-	instance->data_len = strlen(instance->data) / 2;
-	unpack_hex(instance->data, strlen(instance->data), instance->data);
+	unpack_hex(instance->data, instance->data_len, instance->data);
+	instance->data_len = instance->data_len / 2;
+	printf("size: %i\n", instance->data_len);
+	hexdump(instance->data, instance->data_len, 0);
 	send_ack(instance);
 	return 0;
 }

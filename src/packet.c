@@ -80,7 +80,7 @@ int send_packet(libgdbr_t* instance) {
 		printf("Initialize libgdbr_t first\n");
 		return -1;
 	}
-	int ret = send(instance->fd, instance->send_buff, instance->data_len, 0);
+	int ret = send(instance->fd, instance->send_buff, instance->send_len, 0);
 	return ret;
 }
 

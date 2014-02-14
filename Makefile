@@ -42,6 +42,7 @@ lib: prepare $(SRC_O)
 
 clean:
 	-rm $(SRC_O)
+	-rm $(LIB)/*
 
 unit: lib 
 	$(CC) $(CFLAGS) $(TEST_INCLUDES) -c $(UNIT_TEST) -o $(TEST_D)/unit.o

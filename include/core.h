@@ -20,6 +20,8 @@
 #define CMD_WRITEMEM	"M"
 #define CMD_READMEM		"m"
 
+#define CMD_BP				"Z0"
+#define CMD_RBP				"z0"
 #define CMD_QRCMD			"qRcmd,"
 #define CMD_C					"vCont"
 #define CMD_C_CONT		"c"

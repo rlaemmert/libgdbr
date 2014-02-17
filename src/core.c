@@ -260,13 +260,43 @@ int test_command(libgdbr_t* instance, char* command) {
 int send_vcont(libgdbr_t* instance, char* command, int thread_id) {
 	char tmp[255] = {};
 	int ret = snprintf(tmp, 255, "%s;%s:%x", CMD_C, command, thread_id);
-	send_command(instance, tmp);
 	if (ret < 0) return ret;
+	send_command(instance, tmp);
 
 	int read_len = read_packet(instance);
 	if (read_len > 0) { 
 		parse_packet(instance, 0);
 		return handle_cont(instance);
+	}
+	return 0;
+}
+
+
+int gdbr_set_breakpoint(libgdbr_t* instance, uint64_t address, char* conditions) {
+	char tmp[255] = {};
+	int ret = snprintf(tmp, 255, "%s,%llx,1", CMD_BP, address);
+	if (ret < 0) return ret;
+	send_command(instance, tmp);
+
+	int read_len = read_packet(instance);
+	if (read_len > 0) {
+		parse_packet(instance, 0);
+		return handle_setbp(instance);
+	}
+	return 0;
+}
+
+
+int gdbr_unset_breakpoint(libgdbr_t* instance, uint64_t address) {
+	char tmp[255] = {};
+	int ret = snprintf(tmp, 255, "%s,%llx,1", CMD_RBP, address);
+	if (ret < 0) return ret;
+	send_command(instance, tmp);
+
+	int read_len = read_packet(instance);
+	if (read_len > 0) {
+		parse_packet(instance, 0);
+		return handle_unsetbp(instance);
 	}
 	return 0;
 }

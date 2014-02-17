@@ -56,3 +56,15 @@ int handle_cont(libgdbr_t* instance) {
 	return 0;
 }
 
+
+int handle_setbp(libgdbr_t* instance) {
+	send_ack(instance);
+	return 0;
+}
+
+
+int handle_unsetbp(libgdbr_t* instance) {
+	send_ack(instance);
+	return 0;
+}
+

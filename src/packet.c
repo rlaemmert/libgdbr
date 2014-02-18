@@ -50,6 +50,33 @@ void handle_packet(parsing_object_t* current) {
 	}
 }
 
+//0*{
+int unpack_data(char* dst, char* src, uint64_t len) {
+	hexdump(src, len, 0);
+	int i = 0;
+	char last;
+	int ret_len = 0;
+	char* p_dst = dst;
+	while ( i < len) {
+		if (src[i] == '*') {
+			if (++i >= len ) printf("Error\n");
+			char size = src[i++];
+			printf("<%c>\n", size);
+			uint8_t runlength = size - 29;
+			printf("Len: %i\n", runlength);
+			ret_len += runlength - 2;
+			while ( i < len && runlength-- > 0) {
+				*(p_dst++) = last;
+			}
+			continue;
+		}
+		last = src[i++];
+		*(p_dst++) = last;
+	}
+	return ret_len;
+}
+
+
 
 int parse_packet(libgdbr_t* instance, int data_offset) {
 	parsing_object_t new;
@@ -66,8 +93,10 @@ int parse_packet(libgdbr_t* instance, int data_offset) {
 			instance->data_len += current_size;
 			instance->data_max += current_size;
 		}
-		memcpy(instance->data + target_pos , new.buffer + new.start, current_size);
-		target_pos += current_size;
+		int runlength = unpack_data(instance->data + target_pos, new.buffer + new.start, current_size);
+		//memcpy(instance->data + target_pos , new.buffer + new.start, current_size);
+		target_pos += current_size + runlength;
+		instance->data_len += runlength;
 	}
 	instance->data[instance->data_len] = '\0';
 	return 0;

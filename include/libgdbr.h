@@ -108,6 +108,14 @@ int gdbr_read_memory(libgdbr_t* instance, uint64_t address, uint64_t len);
 int gdbr_write_memory(libgdbr_t* instance, uint64_t address, char* data, uint64_t len);
 int gdbr_send_command(libgdbr_t* instance, char* command);
 int test_command(libgdbr_t* instance, char* command);
+
+/*!
+ * \brief Function sets normal breakpoint (0xcc, int3)
+ * \param gdbr instance that contains the current context
+ * \param addrress at this position the breakpoint will be added
+ * \param conditions TODO: examine how this condition string should look like
+ * \returns a failure code (currently -1) or 0 if call successfully
+ */
 int gdbr_set_breakpoint(libgdbr_t* instance, uint64_t address, char* conditions);
 int gdbr_unset_breakpoint(libgdbr_t* instance, uint64_t address);
 

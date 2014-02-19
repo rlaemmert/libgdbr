@@ -34,7 +34,7 @@
  * \param command the command that will be sent
  * \returns a failure code (currently -1) or 0 if call successfully
  */
-int send_command(libgdbr_t* instance, char* command, uint64_t command_len);
+int send_command(libgdbr_t* instance, char* command);
 
 /*!
  * \brief Function sends a vCont command to the gdbserver

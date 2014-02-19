@@ -87,7 +87,8 @@ int gdbr_connect(libgdbr_t* instance, const char* host, int port) {
 	instance->connected = 1;
 	// TODO add config possibility here
 	char* message = "qSupported:multiprocess+;qRelocInsn+";
-	send_command(instance, message);
+	uint64_t message_len = strlen(message);
+	send_command(instance, message, message_len);
 	read_packet(instance);
 	return handle_connect(instance);
 }
@@ -102,7 +103,8 @@ int gdbr_disconnect(libgdbr_t* instance) {
 
 
 int gdbr_read_registers(libgdbr_t* instance) {
-	send_command(instance, CMD_READREGS);
+	uint64_t cmd_len = strlen(CMD_READREGS);
+	send_command(instance, CMD_READREGS, cmd_len);
 	int read_len = read_packet(instance);
 	if ( read_len > 0) {
 		parse_packet(instance, 0);
@@ -115,8 +117,8 @@ int gdbr_read_registers(libgdbr_t* instance) {
 int gdbr_read_memory(libgdbr_t* instance, uint64_t address, uint64_t len) {
 	char command[255] = {};
 	int ret = snprintf(command, 255, "%s%016lx,%ld", CMD_READMEM, address, len);
-	send_command(instance, command);
 	if (ret < 0) return ret;
+	send_command(instance, command, ret);
 
 	int read_len = read_packet(instance);
 	if (read_len > 0) { 
@@ -129,12 +131,12 @@ int gdbr_read_memory(libgdbr_t* instance, uint64_t address, uint64_t len) {
 
 int gdbr_write_memory(libgdbr_t* instance, uint64_t address, char* data, uint64_t len) {
 	char command[255] = {};
-	snprintf(command, 255, "%s%016lx,%ld:", CMD_WRITEMEM, address, len);
-	int command_len = strlen(command);
-	char* tmp = calloc(command_len + (len * 2), sizeof(char));
-	memcpy(tmp, command, command_len);
-	pack_hex(data, len, (tmp + command_len));
-	send_command(instance, tmp);
+	int ret = snprintf(command, 255, "%s%016lx,%ld:", CMD_WRITEMEM, address, len);
+	if (ret < 0) return ret;
+	char* tmp = calloc(ret + (len * 2), sizeof(char));
+	memcpy(tmp, command, ret);
+	pack_hex(data, len, (tmp + ret));
+	send_command(instance, tmp, ret + len);
 	free(tmp);
 
 	int read_len = read_packet(instance);
@@ -157,10 +159,12 @@ int gdbr_continue(libgdbr_t* instance, int thread_id) {
 
 
 int gdbr_send_command(libgdbr_t* instance, char* command) {
-	char* cmd = calloc((strlen(command) * 2 + strlen(CMD_QRCMD) + 2), sizeof(char));
+	uint64_t qrcmd_len = strlen(CMD_QRCMD);
+	uint64_t command_len = strlen(command);
+	char* cmd = calloc((command_len * 2 + qrcmd_len + 2), sizeof(char));
 	strcpy(cmd, CMD_QRCMD);
-	pack_hex(command, strlen(command), (cmd + strlen(CMD_QRCMD)));
-	int ret = send_command(instance, cmd);
+	pack_hex(command, command_len, (cmd + qrcmd_len));
+	int ret = send_command(instance, cmd, command_len + qrcmd_len);
 	free(cmd);
 	if (ret < 0) return ret;
 
@@ -181,7 +185,7 @@ int gdbr_write_bin_registers(libgdbr_t* instance, char* registers) {
 	char* command = calloc(buffer_size, sizeof(char));
 	snprintf(command, buffer_size, "%s", CMD_WRITEREGS);
 	strcpy(command+1, registers);
-	send_command(instance, command);
+	send_command(instance, command, 500); //TODO calc right size
 	free(command);
 	return 0;
 }
@@ -239,9 +243,9 @@ int gdbr_write_registers(libgdbr_t* instance, char* registers) {
 
 	uint64_t buffer_size = instance->data_len * 2 + 8;
 	char* command = calloc(buffer_size, sizeof(char));
-	snprintf(command, buffer_size, "%s", CMD_WRITEREGS);
+	ret = snprintf(command, buffer_size, "%s", CMD_WRITEREGS);
 	pack_hex(instance->data, instance->data_len, command+1);
-	send_command(instance, command);
+	send_command(instance, command, ret + instance->data_len);
 	read_packet(instance);
 	free(command);
 	handle_G(instance);
@@ -250,7 +254,7 @@ int gdbr_write_registers(libgdbr_t* instance, char* registers) {
 
 
 int test_command(libgdbr_t* instance, char* command) {
-	send_command(instance, command);
+	send_command(instance, command, strlen(command));
 	read_packet(instance);
 	hexdump(instance->read_buff, instance->data_len, 0);
 	return 0;
@@ -261,7 +265,7 @@ int send_vcont(libgdbr_t* instance, char* command, int thread_id) {
 	char tmp[255] = {};
 	int ret = snprintf(tmp, 255, "%s;%s:%x", CMD_C, command, thread_id);
 	if (ret < 0) return ret;
-	send_command(instance, tmp);
+	send_command(instance, tmp, ret);
 
 	int read_len = read_packet(instance);
 	if (read_len > 0) { 
@@ -276,7 +280,7 @@ int gdbr_set_breakpoint(libgdbr_t* instance, uint64_t address, char* conditions)
 	char tmp[255] = {};
 	int ret = snprintf(tmp, 255, "%s,%llx,1", CMD_BP, address);
 	if (ret < 0) return ret;
-	send_command(instance, tmp);
+	send_command(instance, tmp, ret);
 
 	int read_len = read_packet(instance);
 	if (read_len > 0) {
@@ -291,7 +295,7 @@ int gdbr_unset_breakpoint(libgdbr_t* instance, uint64_t address) {
 	char tmp[255] = {};
 	int ret = snprintf(tmp, 255, "%s,%llx,1", CMD_RBP, address);
 	if (ret < 0) return ret;
-	send_command(instance, tmp);
+	send_command(instance, tmp, ret);
 
 	int read_len = read_packet(instance);
 	if (read_len > 0) {
@@ -309,7 +313,7 @@ int send_ack(libgdbr_t* instance) {
 	return 0;
 }
 
-int send_command(libgdbr_t* instance, char* command) {
+int send_command(libgdbr_t* instance, char* command, uint64_t command_len) {
 	uint8_t checksum = cmd_checksum(command);
 	int ret = snprintf(instance->send_buff, instance->send_max, "$%s#%.2x", command, checksum);
 	if (ret < 0) {

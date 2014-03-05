@@ -43,7 +43,7 @@ typedef struct libgdbr_t
 	ssize_t send_max; // definses the maximal len for the given buffer
 	char* read_buff;
 	ssize_t read_len;
-	ssize_t max_read_size;
+	ssize_t read_max;
 
 	// is already handled (i.e. already send or ...)
 	int fd; // Filedescriptor // TODO add r_socket stuff from radare
@@ -116,7 +116,8 @@ int test_command(libgdbr_t* instance, char* command);
  * \param conditions TODO: examine how this condition string should look like
  * \returns a failure code (currently -1) or 0 if call successfully
  */
-int gdbr_set_breakpoint(libgdbr_t* instance, uint64_t address, char* conditions);
+int gdbr_set_bp(libgdbr_t* instance, uint64_t address, char* conditions);
+int gdbr_set_hbp(libgdbr_t* instance, uint64_t address, char* conditions);
 int gdbr_unset_breakpoint(libgdbr_t* instance, uint64_t address);
 
 #endif

@@ -9,9 +9,9 @@ int gdbr_init(libgdbr_t* instance) {
 	instance->send_buff = (char*) calloc(2500, sizeof(char));
 	instance->send_len = 0;
 	instance->send_max = 2500;
-	instance->read_buff = (char*) calloc(2500, sizeof(char));
-	instance->read_len = 2500;
-	instance->max_read_size = 2500;
+	instance->read_buff = (char*) calloc(4096, sizeof(char));
+	instance->read_len = 0;
+	instance->read_max = 4096;
 	instance->connected = 0;
 	instance->data_len = 0;
 	instance->data = calloc(4096, sizeof(char));
@@ -115,8 +115,8 @@ int gdbr_read_registers(libgdbr_t* instance) {
 int gdbr_read_memory(libgdbr_t* instance, uint64_t address, uint64_t len) {
 	char command[255] = {};
 	int ret = snprintf(command, 255, "%s%016lx,%ld", CMD_READMEM, address, len);
-	send_command(instance, command);
 	if (ret < 0) return ret;
+	send_command(instance, command);
 
 	int read_len = read_packet(instance);
 	if (read_len > 0) { 
@@ -129,8 +129,7 @@ int gdbr_read_memory(libgdbr_t* instance, uint64_t address, uint64_t len) {
 
 int gdbr_write_memory(libgdbr_t* instance, uint64_t address, char* data, uint64_t len) {
 	char command[255] = {};
-	snprintf(command, 255, "%s%016lx,%ld:", CMD_WRITEMEM, address, len);
-	int command_len = strlen(command);
+	int command_len = snprintf(command, 255, "%s%016lx,%ld:", CMD_WRITEMEM, address, len);
 	char* tmp = calloc(command_len + (len * 2), sizeof(char));
 	memcpy(tmp, command, command_len);
 	pack_hex(data, len, (tmp + command_len));
@@ -175,14 +174,15 @@ int gdbr_send_command(libgdbr_t* instance, char* command) {
 
 int gdbr_write_bin_registers(libgdbr_t* instance, char* registers) {
 	gdbr_read_registers(instance);
-	hexdump(instance->data, instance->data_len, 0);
-	hexdump(registers, 500, 0);
-	uint64_t buffer_size = strlen(registers) + 2;
+
+	uint64_t buffer_size = instance->data_len * 2 + 8;
 	char* command = calloc(buffer_size, sizeof(char));
 	snprintf(command, buffer_size, "%s", CMD_WRITEREGS);
-	strcpy(command+1, registers);
+	pack_hex(instance->data, instance->data_len, command+1);
 	send_command(instance, command);
+	read_packet(instance);
 	free(command);
+	handle_G(instance);
 	return 0;
 }
 
@@ -272,9 +272,25 @@ int send_vcont(libgdbr_t* instance, char* command, int thread_id) {
 }
 
 
-int gdbr_set_breakpoint(libgdbr_t* instance, uint64_t address, char* conditions) {
+int set_bp(libgdbr_t* instance, uint64_t address, char* conditions, enum Breakpoint type) {
 	char tmp[255] = {};
-	int ret = snprintf(tmp, 255, "%s,%llx,1", CMD_BP, address);
+	int ret = 0;
+	switch(type) {
+		case BREAKPOINT:
+			ret = snprintf(tmp, 255, "%s,%llx,1", CMD_BP, address);
+			break;
+		case HARDWARE_BREAKPOINT:
+			ret = snprintf(tmp, 255, "%s,%llx,1", CMD_HBP, address);
+			break;
+		case WRITE_WATCHPOINT:
+			break;
+		case READ_WATCHPOINT:
+			break;
+		case ACCESS_WATCHPOINT:
+			break;
+		default:
+			break;
+	}
 	if (ret < 0) return ret;
 	send_command(instance, tmp);
 
@@ -287,16 +303,52 @@ int gdbr_set_breakpoint(libgdbr_t* instance, uint64_t address, char* conditions)
 }
 
 
-int gdbr_unset_breakpoint(libgdbr_t* instance, uint64_t address) {
+int gdbr_set_bp(libgdbr_t* instance, uint64_t address, char* conditions) {
+	return set_bp(instance, address, conditions, BREAKPOINT);
+}
+
+
+int gdbr_set_hwbp(libgdbr_t* instance, uint64_t address, char* conditions) {
+	return set_bp(instance, address, conditions, HARDWARE_BREAKPOINT);
+}
+
+
+int gdbr_remove_bp(libgdbr_t* instance, uint64_t address) {
+	return remove_bp(instance, address, BREAKPOINT);
+}
+
+
+int gdbr_remove_hwbp(libgdbr_t* instance, uint64_t address) {
+	return remove_bp(instance, address, HARDWARE_BREAKPOINT);
+}
+
+
+int remove_bp(libgdbr_t* instance, uint64_t address, char* conditions, enum Breakpoint type) {
 	char tmp[255] = {};
-	int ret = snprintf(tmp, 255, "%s,%llx,1", CMD_RBP, address);
+	int ret = 0;
+	switch(type) {
+		case BREAKPOINT:
+			ret = snprintf(tmp, 255, "%s,%llx,1", CMD_RBP, address);
+			break;
+		case HARDWARE_BREAKPOINT:
+			ret = snprintf(tmp, 255, "%s,%llx,1", CMD_RHBP, address);
+			break;
+		case WRITE_WATCHPOINT:
+			break;
+		case READ_WATCHPOINT:
+			break;
+		case ACCESS_WATCHPOINT:
+			break;
+		default:
+			break;
+	}
 	if (ret < 0) return ret;
 	send_command(instance, tmp);
 
 	int read_len = read_packet(instance);
 	if (read_len > 0) {
 		parse_packet(instance, 0);
-		return handle_unsetbp(instance);
+		return handle_removebp(instance);
 	}
 	return 0;
 }
@@ -308,6 +360,7 @@ int send_ack(libgdbr_t* instance) {
 	send_packet(instance);
 	return 0;
 }
+
 
 int send_command(libgdbr_t* instance, char* command) {
 	uint8_t checksum = cmd_checksum(command);

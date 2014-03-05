@@ -22,10 +22,21 @@
 
 #define CMD_BP				"Z0"
 #define CMD_RBP				"z0"
+#define CMD_HBP				"Z1"
+#define CMD_RHBP			"z1"
 #define CMD_QRCMD			"qRcmd,"
 #define CMD_C					"vCont"
 #define CMD_C_CONT		"c"
 #define CMD_C_STEP		"s"
+
+
+enum Breakpoint{
+	BREAKPOINT,
+	HARDWARE_BREAKPOINT,
+	WRITE_WATCHPOINT,
+	READ_WATCHPOINT,
+	ACCESS_WATCHPOINT
+};
 
 
 /*!
@@ -50,5 +61,7 @@ int send_vcont(libgdbr_t* instance, char* command, int thread_id);
  * \returns -1 if something went wrong
  */
 int send_ack(libgdbr_t* instance);
+
+int set_bp(libgdbr_t* instance, uint64_t address, char* conditions, enum Breakpoint type);
 
 #endif

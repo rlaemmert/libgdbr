@@ -50,9 +50,11 @@ void handle_packet(parsing_object_t* current) {
 	}
 }
 
-//0*{
+/**
+ * helper function that should unpack
+ * run-length encoded streams of data
+ */
 int unpack_data(char* dst, char* src, uint64_t len) {
-	hexdump(src, len, 0);
 	int i = 0;
 	char last;
 	int ret_len = 0;
@@ -61,9 +63,7 @@ int unpack_data(char* dst, char* src, uint64_t len) {
 		if (src[i] == '*') {
 			if (++i >= len ) printf("Error\n");
 			char size = src[i++];
-			printf("<%c>\n", size);
 			uint8_t runlength = size - 29;
-			printf("Len: %i\n", runlength);
 			ret_len += runlength - 2;
 			while ( i < len && runlength-- > 0) {
 				*(p_dst++) = last;
@@ -77,28 +77,25 @@ int unpack_data(char* dst, char* src, uint64_t len) {
 }
 
 
-
 int parse_packet(libgdbr_t* instance, int data_offset) {
 	parsing_object_t new;
 	memset(&new, 0, sizeof(parsing_object_t));
-	new.length = instance->data_len;
+	new.length = instance->read_len;
 	new.buffer = instance->read_buff;
 	uint64_t target_pos = 0;
 	while(new.position < new.length) {
 		handle_packet(&new);
 		new.start += data_offset;
 		uint64_t current_size = new.end - new.start;
-		if ( instance->data_max <= (instance->data_len + current_size)) {
-			instance->data = realloc(instance->data, instance->data_len + current_size + 1);
-			instance->data_len += current_size;
-			instance->data_max += current_size;
+		if ( target_pos * 2 >= instance->data_max) {
+			instance->data = realloc(instance->data, (instance->data_max * 2 + 1));
+			instance->data_max = instance->data_max * 2 + 1;
 		}
 		int runlength = unpack_data(instance->data + target_pos, new.buffer + new.start, current_size);
-		//memcpy(instance->data + target_pos , new.buffer + new.start, current_size);
 		target_pos += current_size + runlength;
-		instance->data_len += runlength;
 	}
-	instance->data[instance->data_len] = '\0';
+	instance->data_len = target_pos; // setting the resulting length
+	instance->read_len = 0; // reset the read_buf len
 	return 0;
 }
 
@@ -133,15 +130,15 @@ int read_packet(libgdbr_t* instance) {
 		result = select(instance->fd + 1, &readset, NULL, NULL, &tv);
 		if (result > 0) {
 			if (FD_ISSET(instance->fd, &readset)) {
-				if ( instance->read_len <= (current_size + instance->max_read_size)) {
-					instance->read_buff = realloc(instance->read_buff, instance->read_len + instance->max_read_size);
-					instance->read_len += instance->max_read_size;
+				if ( current_size * 2 >= instance->read_max) {
+					instance->read_buff = realloc(instance->read_buff, instance->read_max  * 2);
+					instance->read_max = instance->read_max * 2;
 				}
-				ret = recv(instance->fd, (instance->read_buff + current_size), instance->max_read_size, 0);
+				ret = recv(instance->fd, (instance->read_buff + current_size), (instance->read_max - current_size), 0);
 				current_size += ret;
 			}
 		}
 	}
-	instance->data_len = current_size;
-	return ret;
+	instance->read_len = current_size;
+	return current_size;
 }

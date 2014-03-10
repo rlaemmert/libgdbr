@@ -62,4 +62,7 @@ int send_ack(libgdbr_t* instance);
 
 int set_bp(libgdbr_t* instance, uint64_t address, char* conditions, enum Breakpoint type);
 
+int remove_bp(libgdbr_t* g, uint64_t address, enum Breakpoint type);
+
 #endif
+

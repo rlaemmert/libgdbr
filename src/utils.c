@@ -1,5 +1,6 @@
-#include "utils.h"
+/* libgdbr - LGPL - Copyright 2014 - defragger */
 
+#include "utils.h"
 
 /**
  * Function creates the checksum
@@ -14,7 +15,6 @@ uint8_t cmd_checksum(const char* command) {
 	}
 	return sum;
 }
-
 
 /**
  * Converts str to uint64_t
@@ -58,7 +58,6 @@ int hex2int(int ch) {
 	return -1;
 }
 
-
 /**
  * Converts a given nibble (4bit) into its hex representation
  * @returns hex char or -1 on error
@@ -69,14 +68,12 @@ int int2hex(int i) {
 	return -1;
 }
 
-
 char hex2char(char* hex) {
 	uint8_t result = hex2int((int)hex[0]);
 	result <<= 4;
 	result |= hex2int(hex[1]);
 	return (char) result;
 }
-
 
 int unpack_hex(char* src, uint64_t len, char* dst) {
 	int i = 0;
@@ -90,7 +87,6 @@ int unpack_hex(char* src, uint64_t len, char* dst) {
 	return len;
 }
 
-
 int pack_hex(char* src, uint64_t len, char* dst) {
 	int i = 0;
 	int x = 0;
@@ -102,7 +98,6 @@ int pack_hex(char* src, uint64_t len, char* dst) {
 	dst[i] = '\0';
 	return (len/2);
 }
-
 
 void hexdump(void* ptr, uint64_t len, uint64_t offset) {
 	unsigned char* data = (unsigned char*)ptr;
@@ -118,7 +113,7 @@ void hexdump(void* ptr, uint64_t len, uint64_t offset) {
 		do {
 			p += sprintf(p, "%02hhx ", data[x]);
 			*c++ = (data[x] >= 32 && data[x] <= 127) ? data[x] : '.';
-		}while (++x % 16 && x < len);
+		} while (++x % 16 && x < len);
 
 		*c = '\0';
 		printf("0x%016lx: %-48s- %s\n", (curr_offset), hex, txt);

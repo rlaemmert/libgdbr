@@ -10,8 +10,7 @@
 #include "libgdbr.h"
 #include <stdio.h>
 
-typedef struct parsing_object_t
-{
+typedef struct parsing_object_t {
 	char* buffer;
 	ssize_t length;
 	int start;

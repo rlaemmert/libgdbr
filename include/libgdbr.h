@@ -61,20 +61,20 @@ typedef struct libgdbr_t {
  * \brief Function initializes the libgdbr lib
  * \returns a failure code (currently -1) or 0 if call successfully
  */
-int r_gdb_init(libgdbr_t* g);
+int gdbr_init(libgdbr_t* g);
 
 /*!
  * \brief Function initializes the architecture of the gdbsession
  * \param architecture defines the architecure used (registersize, and such)
  * \returns a failure code
  */
-int r_gdb_set_architecture(libgdbr_t* g, uint8_t architecture);
+int gdbr_set_architecture(libgdbr_t* g, uint8_t architecture);
 
 /*!
  * \brief frees all buffers and cleans the libgdbr instance stuff
  * \returns a failure code (currently -1) or 0 if call successfully
  */
-int r_gdb_cleanup(libgdbr_t* g);
+int gdbr_cleanup(libgdbr_t* g);
 
 /*!
  * \brief Function connects to a gdbserver instance
@@ -82,18 +82,18 @@ int r_gdb_cleanup(libgdbr_t* g);
  * \param number that represents the port
  * \returns a failure code (currently -1) or 0 if call successfully
  */
-int r_gdb_connect(libgdbr_t* g, const char* server, int port);
+int gdbr_connect(libgdbr_t* g, const char* server, int port);
 
 /*!
  * \brief disconnects the lib
  * \returns a failure code (currently -1) or 0 if call successfully
  */
-int r_gdb_disconnect(libgdbr_t* g);
+int gdbr_disconnect(libgdbr_t* g);
 
 // Commands
-int r_gdb_continue(libgdbr_t* g, int thread_id);
-int r_gdb_step(libgdbr_t* g, int thread_id);
-int r_gdb_read_registers(libgdbr_t* g);
+int gdbr_continue(libgdbr_t* g, int thread_id);
+int gdbr_step(libgdbr_t* g, int thread_id);
+int gdbr_read_registers(libgdbr_t* g);
 
 /*!
  * \brief Function writes general purpose registers
@@ -103,11 +103,11 @@ int r_gdb_read_registers(libgdbr_t* g);
  * i.e. eax=0x123,ebx=0x234
  * \returns a failurre code (currently -1) or 0 if call successfully
  */
-int r_gdb_write_bin_registers(libgdbr_t* g, char* registers);
-int r_gdb_write_registers(libgdbr_t* g, char* registers);
-int r_gdb_read_memory(libgdbr_t* g, uint64_t address, uint64_t len);
-int r_gdb_write_memory(libgdbr_t* g, uint64_t address, char* data, uint64_t len);
-int r_gdb_send_command(libgdbr_t* g, char* command);
+int gdbr_write_bin_registers(libgdbr_t* g, char* registers);
+int gdbr_write_registers(libgdbr_t* g, char* registers);
+int gdbr_read_memory(libgdbr_t* g, uint64_t address, uint64_t len);
+int gdbr_write_memory(libgdbr_t* g, uint64_t address, char* data, uint64_t len);
+int gdbr_send_command(libgdbr_t* g, char* command);
 int test_command(libgdbr_t* g, char* command);
 
 /*!
@@ -117,8 +117,8 @@ int test_command(libgdbr_t* g, char* command);
  * \param conditions TODO: examine how this condition string should look like
  * \returns a failure code (currently -1) or 0 if call successfully
  */
-int r_gdb_set_bp(libgdbr_t* g, uint64_t address, char* conditions);
-int r_gdb_set_hbp(libgdbr_t* g, uint64_t address, char* conditions);
-int r_gdb_unset_breakpoint(libgdbr_t* g, uint64_t address);
+int gdbr_set_bp(libgdbr_t* g, uint64_t address, char* conditions);
+int gdbr_set_hbp(libgdbr_t* g, uint64_t address, char* conditions);
+int gdbr_unset_breakpoint(libgdbr_t* g, uint64_t address);
 
 #endif

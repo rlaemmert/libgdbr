@@ -113,7 +113,7 @@ static registers_t x86_32[] = {
 	{"",	0,	0,	0}
 };
 
-int r_gdb_init(libgdbr_t* g) {
+int gdbr_init(libgdbr_t* g) {
 	memset(g ,0 , sizeof(libgdbr_t));
 	g->send_buff = (char*) calloc(2500, sizeof(char));
 	g->send_len = 0;
@@ -128,7 +128,7 @@ int r_gdb_init(libgdbr_t* g) {
 	return 0; 
 }
 
-int r_gdb_set_architecture(libgdbr_t* g, uint8_t architecture) {
+int gdbr_set_architecture(libgdbr_t* g, uint8_t architecture) {
 	g->architecture = architecture;
 	switch (architecture) {
 		case ARCH_X86_32:
@@ -143,7 +143,7 @@ int r_gdb_set_architecture(libgdbr_t* g, uint8_t architecture) {
 	return 0;
 }
 
-int r_gdb_cleanup(libgdbr_t* g) {
+int gdbr_cleanup(libgdbr_t* g) {
 	free(g->data);
 	free(g->send_buff);
 	g->send_len = 0;
@@ -152,7 +152,7 @@ int r_gdb_cleanup(libgdbr_t* g) {
 	return 0;
 }
 
-int r_gdb_connect(libgdbr_t* g, const char* host, int port) {
+int gdbr_connect(libgdbr_t* g, const char* host, int port) {
 	int	fd;
 	int	connected;
 	struct protoent		*protocol;
@@ -198,14 +198,14 @@ int r_gdb_connect(libgdbr_t* g, const char* host, int port) {
 	return handle_connect(g);
 }
 
-int r_gdb_disconnect(libgdbr_t* g) {
+int gdbr_disconnect(libgdbr_t* g) {
 	// TODO Disconnect maybe send something to gdbserver
 	close(g->fd);
 	g->connected = 0;
 	return 0;
 }
 
-int r_gdb_read_registers(libgdbr_t* g) {
+int gdbr_read_registers(libgdbr_t* g) {
 	send_command(g, CMD_READREGS);
 	int read_len = read_packet(g);
 	if ( read_len > 0) {
@@ -215,7 +215,7 @@ int r_gdb_read_registers(libgdbr_t* g) {
 	return -1;
 }
 
-int r_gdb_read_memory(libgdbr_t* g, uint64_t address, uint64_t len) {
+int gdbr_read_memory(libgdbr_t* g, uint64_t address, uint64_t len) {
 	char command[255] = {};
 	int ret = snprintf(command, 255, "%s%016lx,%ld", CMD_READMEM, address, len);
 	if (ret < 0) return ret;
@@ -229,7 +229,7 @@ int r_gdb_read_memory(libgdbr_t* g, uint64_t address, uint64_t len) {
 	return -1;
 }
 
-int r_gdb_write_memory(libgdbr_t* g, uint64_t address, char* data, uint64_t len) {
+int gdbr_write_memory(libgdbr_t* g, uint64_t address, char* data, uint64_t len) {
 	char command[255] = {};
 	int command_len = snprintf(command, 255, "%s%016lx,%ld:", CMD_WRITEMEM, address, len);
 	char* tmp = calloc(command_len + (len * 2), sizeof(char));
@@ -246,15 +246,15 @@ int r_gdb_write_memory(libgdbr_t* g, uint64_t address, char* data, uint64_t len)
 	return -1;
 }
 
-int r_gdb_step(libgdbr_t* g, int thread_id) {
+int gdbr_step(libgdbr_t* g, int thread_id) {
 	return send_vcont(g, CMD_C_STEP, thread_id);
 }
 
-int r_gdb_continue(libgdbr_t* g, int thread_id) {
+int gdbr_continue(libgdbr_t* g, int thread_id) {
 	return send_vcont(g, CMD_C_CONT, thread_id);
 }
 
-int r_gdb_send_command(libgdbr_t* g, char* command) {
+int gdbr_send_command(libgdbr_t* g, char* command) {
 	char* cmd = calloc((strlen(command) * 2 + strlen(CMD_QRCMD) + 2), sizeof(char));
 	strcpy(cmd, CMD_QRCMD);
 	pack_hex(command, strlen(command), (cmd + strlen(CMD_QRCMD)));
@@ -270,8 +270,8 @@ int r_gdb_send_command(libgdbr_t* g, char* command) {
 	return -1;
 }	
 
-int r_gdb_write_bin_registers(libgdbr_t* g, char* registers) {
-	r_gdb_read_registers(g);
+int gdbr_write_bin_registers(libgdbr_t* g, char* registers) {
+	gdbr_read_registers(g);
 
 	uint64_t buffer_size = g->data_len * 2 + 8;
 	char* command = calloc(buffer_size, sizeof(char));
@@ -284,9 +284,9 @@ int r_gdb_write_bin_registers(libgdbr_t* g, char* registers) {
 	return 0;
 }
 
-int r_gdb_write_registers(libgdbr_t* g, char* registers) {
+int gdbr_write_registers(libgdbr_t* g, char* registers) {
 	// read current register set
-	r_gdb_read_registers(g);
+	gdbr_read_registers(g);
 
 	int len = strlen(registers);
 	char* buff = calloc(len, sizeof(char));
@@ -394,19 +394,19 @@ int set_bp(libgdbr_t* g, uint64_t address, char* conditions, enum Breakpoint typ
 	return 0;
 }
 
-int r_gdb_set_bp(libgdbr_t* g, uint64_t address, char* conditions) {
+int gdbr_set_bp(libgdbr_t* g, uint64_t address, char* conditions) {
 	return set_bp(g, address, conditions, BREAKPOINT);
 }
 
-int r_gdb_set_hwbp(libgdbr_t* g, uint64_t address, char* conditions) {
+int gdbr_set_hwbp(libgdbr_t* g, uint64_t address, char* conditions) {
 	return set_bp(g, address, conditions, HARDWARE_BREAKPOINT);
 }
 
-int r_gdb_remove_bp(libgdbr_t* g, uint64_t address) {
+int gdbr_remove_bp(libgdbr_t* g, uint64_t address) {
 	return remove_bp(g, address, BREAKPOINT);
 }
 
-int r_gdb_remove_hwbp(libgdbr_t* g, uint64_t address) {
+int gdbr_remove_hwbp(libgdbr_t* g, uint64_t address) {
 	return remove_bp(g, address, HARDWARE_BREAKPOINT);
 }
 

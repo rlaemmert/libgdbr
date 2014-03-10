@@ -16,7 +16,6 @@ typedef struct registers_t {
 	uint64_t value; /*! Saves the value of the register */
 } registers_t;
 
-
 static registers_t x86_64[] = {
 	{"rax",		0,		8,	0},
 	{"rbx",		8,		8,	0},
@@ -78,7 +77,6 @@ static registers_t x86_64[] = {
 	{"", 0, 0, 0}
 };
 
-
 static registers_t x86_32[] = {
 	{"eax",	0,	4,	0},
 	{"ecx",	4,	4,	0},
@@ -123,6 +121,5 @@ static registers_t x86_32[] = {
 	{"mxcsr",	304,	4,	0},
 	{"",	0,	0,	0}
 };
-
 
 #endif

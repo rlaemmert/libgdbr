@@ -5,7 +5,6 @@
 #include <stdint.h>
 #include <stdio.h>
 
-
 uint8_t cmd_checksum(const char* command);
 uint64_t unpack_uint64(char *buff, int len);
 uint64_t unpack_uint64_co(char* buff, int len);

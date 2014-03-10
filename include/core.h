@@ -29,7 +29,6 @@
 #define CMD_C_CONT		"c"
 #define CMD_C_STEP		"s"
 
-
 enum Breakpoint{
 	BREAKPOINT,
 	HARDWARE_BREAKPOINT,
@@ -37,7 +36,6 @@ enum Breakpoint{
 	READ_WATCHPOINT,
 	ACCESS_WATCHPOINT
 };
-
 
 /*!
  * \brief Function sends a command to the gdbserver 

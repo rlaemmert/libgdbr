@@ -20,7 +20,6 @@ typedef struct parsing_object_t {
 	int acks;
 } parsing_object_t;
 
-
 int parse_packet(libgdbr_t* instance, int data_offset);
 /*!
  * \brief sends a packet sends a packet to the established connection

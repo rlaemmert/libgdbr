@@ -55,7 +55,7 @@ void handle_packet(parsing_object_t* po) {
  */
 int unpack_data(char* dst, char* src, uint64_t len) {
 	int i = 0;
-	char last;
+	char last = 0;
 	int ret_len = 0;
 	char* p_dst = dst;
 	while ( i < len) {

@@ -15,8 +15,8 @@
 
 #include "arch.h"
 
-#define X86_64 ARCH_X86_64;
-#define X86_32 ARCH_X86_32;
+#define X86_64 ARCH_X86_64
+#define X86_32 ARCH_X86_32
 
 /*! 
  * Structure that saves a gdb message

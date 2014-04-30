@@ -9,9 +9,9 @@ char get_next_token(parsing_object_t* po) {
 void handle_escape(parsing_object_t* po) {
 	char token;
 	if (po->position >= po->length) return;
-	token = get_next_token(po);
-	if (token == '}') handle_data(po);
-	else handle_escape(po);
+	token = get_next_token (po);
+	if (token == '}') handle_data (po);
+	else handle_escape (po);
 }
 
 void handle_chk(parsing_object_t* po) {
@@ -30,7 +30,7 @@ void handle_data(parsing_object_t* po) {
 	if (token == '#') {
 		po->end = po->position - 1; // subtract 2 cause of # itself and the incremented position after getNextToken
 		handle_chk(po);
-	} else if	(token == '{') {
+	} else if (token == '{') {
 		handle_escape(po);
 	} else handle_data(po);
 }
@@ -60,7 +60,7 @@ int unpack_data(char* dst, char* src, uint64_t len) {
 	char* p_dst = dst;
 	while ( i < len) {
 		if (src[i] == '*') {
-			if (++i >= len ) printf("Error\n");
+			if (++i >= len ) fprintf(stderr, "Runlength decoding error\n");
 			char size = src[i++];
 			uint8_t runlength = size - 29;
 			ret_len += runlength - 2;
@@ -77,21 +77,18 @@ int unpack_data(char* dst, char* src, uint64_t len) {
 
 int parse_packet(libgdbr_t* g, int data_offset) {
 	int runlength;
+	uint64_t po_size, target_pos = 0;
 	parsing_object_t new;
-	memset(&new, 0, sizeof(parsing_object_t));
+	memset (&new, 0, sizeof (parsing_object_t));
 	new.length = g->read_len;
 	new.buffer = g->read_buff;
-	uint64_t target_pos = 0;
-	while(new.position < new.length) {
-		handle_packet(&new);
+	while (new.position < new.length) {
+		handle_packet (&new);
 		new.start += data_offset;
-		uint64_t current_size = new.end - new.start;
-		if ( target_pos * 2 >= g->data_max) {
-			g->data = realloc(g->data, (g->data_max * 2 + 1));
-			g->data_max = g->data_max * 2 + 1;
-		}
-		runlength = unpack_data(g->data + target_pos, new.buffer + new.start, current_size);
-		target_pos += current_size + runlength;
+		po_size = new.end - new.start;
+		runlength = unpack_data (g->data + target_pos,
+			new.buffer + new.start, po_size);
+		target_pos += po_size + runlength;
 	}
 	g->data_len = target_pos; // setting the resulting length
 	g->read_len = 0; // reset the read_buf len
@@ -100,43 +97,37 @@ int parse_packet(libgdbr_t* g, int data_offset) {
 
 int send_packet(libgdbr_t* g) {
 	if (!g) {
-		// TODO corect error handling here
-		printf("Initialize libgdbr_t first\n");
+		fprintf(stderr, "Initialize libgdbr_t first\n");
 		return -1;
 	}
-	int ret = send(g->fd, g->send_buff, g->send_len, 0);
-	return ret;
+	return send (g->fd, g->send_buff, g->send_len, 0);
 }
 
 int read_packet(libgdbr_t* g) {
+	int ret = 0;
+	int po_size = 0;
+	fd_set readset;
+	int result = 1;
+	struct timeval tv;
 	if (!g) {
-		// TODO correct error handling here
-		printf("Initialize libgdbr_t first\n");
+		fprintf (stderr, "Initialize libgdbr_t first\n");
 		return -1;
 	}
-	int ret = 0;
-	int current_size = 0;
-	fd_set readset;
-	struct timeval tv;
 	tv.tv_sec = 0;
 	tv.tv_usec = 100*1000;
-	int result = 1;
 	while (result > 0) {
-		FD_ZERO(&readset);
-		FD_SET(g->fd, &readset);
-		result = select(g->fd + 1, &readset, NULL, NULL, &tv);
+		FD_ZERO (&readset);
+		FD_SET (g->fd, &readset);
+		result = select (g->fd + 1, &readset, NULL, NULL, &tv);
 		if (result > 0) {
-			if (FD_ISSET(g->fd, &readset)) {
-				if ( current_size * 2 >= g->read_max) {
-					g->read_buff = realloc(g->read_buff, g->read_max  * 2);
-					g->read_max = g->read_max * 2;
-				}
-				ret = recv(g->fd, (g->read_buff + current_size), (g->read_max - current_size), 0);
-				current_size += ret;
+			if (FD_ISSET (g->fd, &readset)) {
+				ret = recv (g->fd, (g->read_buff + \
+					po_size), (g->read_max - \
+					po_size), 0);
+				po_size += ret;
 			}
 		}
 	}
-	g->read_len = current_size;
-	return current_size;
+	g->read_len = po_size;
+	return po_size;
 }
-

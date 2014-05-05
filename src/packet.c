@@ -37,7 +37,7 @@ void handle_data(parsing_object_t* po) {
 
 void handle_packet(parsing_object_t* po) {
 	char token;
-	if(po->position >= po->length) return;
+	if (po->position >= po->length) return;
 	token = get_next_token(po);
 	if (token == '$') {
 		po->start = po->position;

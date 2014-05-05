@@ -1,4 +1,4 @@
-/* libgdbr - LGPL - Copyright 2014 - defragger */
+	/* libgdbr - LGPL - Copyright 2014 - defragger */
 
 #include "libgdbr.h"
 #include "core.h"
@@ -186,16 +186,16 @@ static registers_t aarch64[] = {
 };
 
 int gdbr_init(libgdbr_t* g) {
-	memset(g ,0 , sizeof(libgdbr_t));
-	g->send_buff = (char*) calloc(2500, sizeof(char));
+	memset(g ,0 , sizeof (libgdbr_t));
+	g->send_buff = (char*) calloc(2500, sizeof (char));
 	g->send_len = 0;
 	g->send_max = 2500;
-	g->read_buff = (char*) calloc(4096, sizeof(char));
+	g->read_buff = (char*) calloc(4096, sizeof (char));
 	g->read_len = 0;
 	g->read_max = 4096;
 	g->connected = 0;
 	g->data_len = 0;
-	g->data = calloc(4096, sizeof(char));
+	g->data = calloc(4096, sizeof (char));
 	g->data_max = 4096;
 	return 0; 
 }
@@ -247,7 +247,7 @@ int gdbr_connect(libgdbr_t* g, const char* host, int port) {
 		//TODO Error here
 		return -1;
 	}
-	memset(&socketaddr, 0, sizeof(socketaddr));
+	memset(&socketaddr, 0, sizeof (socketaddr));
 	socketaddr.sin_family = AF_INET;
 	socketaddr.sin_port = htons(port);
 	hostaddr = (struct hostent *)gethostbyname(host);
@@ -258,7 +258,7 @@ int gdbr_connect(libgdbr_t* g, const char* host, int port) {
 		return -1;
 	}
 	
-	connected = connect(fd, (struct sockaddr *) &socketaddr, sizeof(socketaddr));
+	connected = connect(fd, (struct sockaddr *) &socketaddr, sizeof (socketaddr));
 	if (connected == -1) {
 		fprintf(stderr, "Error conn\n");
 		//TODO Error here
@@ -307,7 +307,7 @@ int gdbr_read_memory(libgdbr_t* g, uint64_t address, uint64_t len) {
 int gdbr_write_memory(libgdbr_t* g, uint64_t address, char* data, uint64_t len) {
 	char command[255] = {};
 	int command_len = snprintf(command, 255, "%s%016lx,%ld:", CMD_WRITEMEM, address, len);
-	char* tmp = calloc(command_len + (len * 2), sizeof(char));
+	char* tmp = calloc(command_len + (len * 2), sizeof (char));
 	memcpy(tmp, command, command_len);
 	pack_hex(data, len, (tmp + command_len));
 	send_command(g, tmp);
@@ -330,7 +330,7 @@ int gdbr_continue(libgdbr_t* g, int thread_id) {
 }
 
 int gdbr_send_command(libgdbr_t* g, char* command) {
-	char* cmd = calloc((strlen(command) * 2 + strlen(CMD_QRCMD) + 2), sizeof(char));
+	char* cmd = calloc((strlen(command) * 2 + strlen(CMD_QRCMD) + 2), sizeof (char));
 	strcpy(cmd, CMD_QRCMD);
 	pack_hex(command, strlen(command), (cmd + strlen(CMD_QRCMD)));
 	int ret = send_command(g, cmd);
@@ -349,7 +349,7 @@ int gdbr_write_bin_registers(libgdbr_t* g, char* registers) {
 	gdbr_read_registers(g);
 
 	uint64_t buffer_size = g->data_len * 2 + 8;
-	char* command = calloc(buffer_size, sizeof(char));
+	char* command = calloc(buffer_size, sizeof (char));
 	snprintf(command, buffer_size, "%s", CMD_WRITEREGS);
 	pack_hex(g->data, g->data_len, command+1);
 	send_command(g, command);
@@ -364,7 +364,7 @@ int gdbr_write_registers(libgdbr_t* g, char* registers) {
 	gdbr_read_registers(g);
 
 	int len = strlen(registers);
-	char* buff = calloc(len, sizeof(char));
+	char* buff = calloc(len, sizeof (char));
 	memcpy(buff, registers, len);
 	char* reg = strtok(buff, ",");
 	while ( reg != NULL ) {
@@ -384,7 +384,7 @@ int gdbr_write_registers(libgdbr_t* g, char* registers) {
 				uint64_t register_size = g->registers[i].size;
 				uint64_t offset = g->registers[i].offset;
 
-				char* value = calloc(register_size * 2, sizeof(char));
+				char* value = calloc(register_size * 2, sizeof (char));
 
 				memset(value, '0', register_size * 2);
 								
@@ -409,7 +409,7 @@ int gdbr_write_registers(libgdbr_t* g, char* registers) {
 	free(buff);
 
 	uint64_t buffer_size = g->data_len * 2 + 8;
-	char* command = calloc(buffer_size, sizeof(char));
+	char* command = calloc(buffer_size, sizeof (char));
 	snprintf(command, buffer_size, "%s", CMD_WRITEREGS);
 	pack_hex(g->data, g->data_len, command+1);
 	send_command(g, command);
@@ -442,7 +442,7 @@ int send_vcont(libgdbr_t* g, char* command, int thread_id) {
 int set_bp(libgdbr_t* g, uint64_t address, char* conditions, enum Breakpoint type) {
 	char tmp[255] = {};
 	int ret = 0;
-	switch(type) {
+	switch (type) {
 		case BREAKPOINT:
 			ret = snprintf(tmp, 255, "%s,%lx,1", CMD_BP, address);
 			break;
@@ -488,7 +488,7 @@ int gdbr_remove_hwbp(libgdbr_t* g, uint64_t address) {
 int remove_bp(libgdbr_t* g, uint64_t address, enum Breakpoint type) {
 	char tmp[255] = {};
 	int ret = 0;
-	switch(type) {
+	switch (type) {
 		case BREAKPOINT:
 			ret = snprintf(tmp, 255, "%s,%lx,1", CMD_RBP, address);
 			break;

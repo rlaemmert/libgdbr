@@ -10,7 +10,7 @@
  */
 uint8_t cmd_checksum(const char* command) {
 	uint8_t sum = 0;
-	while(*command != '\0') {
+	while (*command != '\0') {
 		sum += *command++;	
 	}
 	return sum;

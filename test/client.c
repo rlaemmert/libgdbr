@@ -6,7 +6,7 @@ int main() {
 	gdbr_init(&gdb);
 	gdbr_set_architecture(&gdb, X86_64);
 	//char buffer[2500];
-	if(gdbr_connect(&gdb, "localhost", 1234) == -1) {
+	if (gdbr_connect(&gdb, "localhost", 1234) == -1) {
 		printf("Error connecting to target\n");
 		return 0;
 	}

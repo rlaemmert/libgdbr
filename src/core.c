@@ -357,7 +357,7 @@ int gdbr_send_command(libgdbr_t* g, char* command) {
 }	
 
 int gdbr_write_bin_registers(libgdbr_t* g, char* registers) {
-	gdbr_read_registers (g);
+	//gdbr_read_registers (g);
 
 	uint64_t buffer_size = g->data_len * 2 + 8;
 	char* command = calloc (buffer_size, sizeof (char));
@@ -438,7 +438,12 @@ int test_command(libgdbr_t* g, char* command) {
 
 int send_vcont(libgdbr_t* g, char* command, int thread_id) {
 	char tmp[255] = {};
-	int ret = snprintf (tmp, 255, "%s;%s:%x", CMD_C, command, thread_id);
+	int ret;
+	if (thread_id < 0) {
+		ret = snprintf (tmp, 255, "%s;%s", CMD_C, command);
+	} else {
+		ret = snprintf (tmp, 255, "%s;%s:%x", CMD_C, command, thread_id);
+	}
 	if (ret < 0) return ret;
 	send_command (g, tmp);
 	if (read_packet (g) > 0) { 

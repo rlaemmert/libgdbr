@@ -64,7 +64,7 @@ int hex2int(int ch) {
  */
 int int2hex(int i) {
 	if (i >= 0 && i <= 9) return i + 48;
-	if (i >= 10 && i <= 15) return i + 55;
+	if (i >= 10 && i <= 15) return i + 87;
 	return -1;
 }
 

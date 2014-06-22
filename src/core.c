@@ -326,7 +326,7 @@ int gdbr_write_memory(libgdbr_t* g, uint64_t address, char* data, uint64_t len) 
 
 	if (read_packet (g) > 0) {
 		parse_packet (g, 0);
-		return 0;
+		return handle_M (g);
 	}
 	return -1;
 }

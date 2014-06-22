@@ -17,6 +17,10 @@ int handle_G(libgdbr_t* g) {
 	return send_ack (g);
 }
 
+int handle_M(libgdbr_t* g) {
+	return send_ack (g);
+}
+
 int handle_m(libgdbr_t* g) {
 	int len = strlen (g->data);
 	g->data_len = strlen (g->data) / 2;

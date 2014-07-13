@@ -18,6 +18,10 @@
 #define X86_64 ARCH_X86_64
 #define X86_32 ARCH_X86_32
 
+#define MSG_OK 0
+#define MSG_NOT_SUPPORTED -1
+#define MSG_ERROR_1 -2
+
 /*! 
  * Structure that saves a gdb message
  */
@@ -26,13 +30,6 @@ typedef struct libgdbr_message_t {
 	char* msg;	/*! Pointer to the buffer that contains the message */
 	uint8_t chk;	/*! Cheksum of the current message read from the packet */
 } libgdbr_message_t;
-
-/*! 
- * Message stack
- */
-typedef struct libgdbr_message_stack_t {
-	int count; 
-} libgdbr_message_stack_t;
 
 /*! 
  * Core "object" that saves
@@ -55,6 +52,7 @@ typedef struct libgdbr_t {
 	ssize_t data_max;
 	uint8_t architecture;
 	registers_t* registers;
+	int last_code;
 } libgdbr_t;
 
 /*!
@@ -103,12 +101,14 @@ int gdbr_read_registers(libgdbr_t* g);
  * i.e. eax=0x123,ebx=0x234
  * \returns a failurre code (currently -1) or 0 if call successfully
  */
-int gdbr_write_bin_registers(libgdbr_t* g, char* registers);
+int gdbr_write_bin_registers(libgdbr_t* g);
+int gdbr_write_reg(libgdbr_t* g, const char* name, char* value, int len);
+int gdbr_write_register(libgdbr_t* g, int index, char* value, int len);
 int gdbr_write_registers(libgdbr_t* g, char* registers);
 int gdbr_read_memory(libgdbr_t* g, uint64_t address, uint64_t len);
-int gdbr_write_memory(libgdbr_t* g, uint64_t address, char* data, uint64_t len);
+int gdbr_write_memory(libgdbr_t* g, uint64_t address, const uint8_t* data, uint64_t len);
 int gdbr_send_command(libgdbr_t* g, char* command);
-int test_command(libgdbr_t* g, char* command);
+int test_command(libgdbr_t* g, const char* command);
 
 /*!
  * \brief Function sets normal breakpoint (0xcc, int3)
@@ -117,8 +117,8 @@ int test_command(libgdbr_t* g, char* command);
  * \param conditions TODO: examine how this condition string should look like
  * \returns a failure code (currently -1) or 0 if call successfully
  */
-int gdbr_set_bp(libgdbr_t* g, uint64_t address, char* conditions);
-int gdbr_set_hbp(libgdbr_t* g, uint64_t address, char* conditions);
+int gdbr_set_bp(libgdbr_t* g, uint64_t address, const char* conditions);
+int gdbr_set_hbp(libgdbr_t* g, uint64_t address, const char* conditions);
 int gdbr_unset_breakpoint(libgdbr_t* g, uint64_t address);
 
 #endif

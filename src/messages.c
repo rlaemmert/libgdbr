@@ -5,6 +5,7 @@
 #include "core.h"
 #include "utils.h"
 
+
 int handle_g(libgdbr_t* g) {
 	if (unpack_hex (g->data, g->data_len, g->data) < 0) {
 		return -1;
@@ -18,6 +19,16 @@ int handle_G(libgdbr_t* g) {
 }
 
 int handle_M(libgdbr_t* g) {
+	return send_ack (g);
+}
+
+int handle_P(libgdbr_t* g) {
+	if (g->data_len == 0) {
+		g->last_code = MSG_NOT_SUPPORTED;
+	}
+	else {
+		g->last_code = MSG_OK;
+	}
 	return send_ack (g);
 }
 

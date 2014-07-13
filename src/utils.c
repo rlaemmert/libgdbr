@@ -11,7 +11,7 @@
 uint8_t cmd_checksum(const char* command) {
 	uint8_t sum = 0;
 	while (*command != '\0') {
-		sum += *command++;	
+		sum += *command++;
 	}
 	return sum;
 }
@@ -31,7 +31,6 @@ uint64_t unpack_uint64(char *buff, int len) {
 	return retval;
 }
 
-
 /**
  * Changed byte order and
  * converts the value into uint64_t
@@ -45,7 +44,6 @@ uint64_t unpack_uint64_co(char* buff, int len) {
 	}
 	return result;
 }
-
 
 /**
  * Converts a given hex character into its int value

@@ -7,7 +7,7 @@ void parse_test() {
 	libgdbr_t instance;
 	instance.read_buff = parse_cmd1;
 	instance.data_len = strlen (parse_cmd1);
-	libgdbr_parse_packet (&instance);
+	parse_packet (&instance, 0);
 }
 
 int main(int argc, char **argv) {

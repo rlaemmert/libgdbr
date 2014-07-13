@@ -17,6 +17,8 @@
 
 #define CMD_READREGS	"g"
 #define CMD_WRITEREGS	"G"
+#define CMD_READREG		"p"
+#define CMD_WRITEREG	"P"
 #define CMD_WRITEMEM	"M"
 #define CMD_READMEM		"m"
 
@@ -29,7 +31,7 @@
 #define CMD_C_CONT		"c"
 #define CMD_C_STEP		"s"
 
-enum Breakpoint{
+enum Breakpoint {
 	BREAKPOINT,
 	HARDWARE_BREAKPOINT,
 	WRITE_WATCHPOINT,
@@ -38,29 +40,29 @@ enum Breakpoint{
 };
 
 /*!
- * \brief Function sends a command to the gdbserver 
- * \param instance the "instance" of the current libgdbr session
+ * \brief Function sends a command to the gdbserver
+ * \param g the "instance" of the current libgdbr session
  * \param command the command that will be sent
  * \returns a failure code (currently -1) or 0 if call successfully
  */
-int send_command(libgdbr_t* instance, char* command);
+int send_command(libgdbr_t* g, const char* command);
 
 /*!
  * \brief Function sends a vCont command to the gdbserver
- * \param instance thre "instance" of the current libgdbr session
+ * \param g thre "instance" of the current libgdbr session
  * \param command the command that will be sent (i.e. 's,S,c,C...')
  * \returns -1 if something went wrong
  */
-int send_vcont(libgdbr_t* instance, char* command, int thread_id);
+int send_vcont(libgdbr_t* g, const char* command, int thread_id);
 
 /*!
  * \brief Functions sends a single ack ('+')
- * \param instance thre "instance" of the current libgdbr session
+ * \param g the "instance" of the current libgdbr session
  * \returns -1 if something went wrong
  */
-int send_ack(libgdbr_t* instance);
+int send_ack(libgdbr_t* g);
 
-int set_bp(libgdbr_t* instance, uint64_t address, char* conditions, enum Breakpoint type);
+int set_bp(libgdbr_t* g, uint64_t address, const char* conditions, enum Breakpoint type);
 
 int remove_bp(libgdbr_t* g, uint64_t address, enum Breakpoint type);
 

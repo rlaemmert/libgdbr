@@ -189,8 +189,7 @@ static registers_t aarch64[] = {
 int gdbr_init(libgdbr_t* g) {
 	memset (g ,0 , sizeof (libgdbr_t));
 	g->send_buff = (char*) calloc (2500, sizeof (char));
-	if (!g->send_buff) 
-		return -1;
+	if (!g->send_buff) return -1;
 	g->send_len = 0;
 	g->send_max = 2500;
 	g->read_buff = (char*) calloc (4096, sizeof (char));
@@ -199,6 +198,7 @@ int gdbr_init(libgdbr_t* g) {
 		return -1;
 	}
 	g->read_len = 0;
+	g->last_code = MSG_OK;
 	g->read_max = 4096;
 	g->connected = 0;
 	g->data_len = 0;
@@ -242,6 +242,7 @@ int gdbr_cleanup(libgdbr_t* g) {
 
 int gdbr_connect(libgdbr_t* g, const char* host, int port) {
 	int	fd;
+	int ret;
 	int	connected;
 	struct protoent		*protocol;
 	struct hostent		*hostaddr;
@@ -250,14 +251,12 @@ int gdbr_connect(libgdbr_t* g, const char* host, int port) {
 	protocol = getprotobyname ("tcp");
 	if (!protocol) {
 		fprintf (stderr, "Error prot\n");
-		//TODO Error here
 		return -1;
 	}
 
 	fd = socket ( PF_INET, SOCK_STREAM, protocol->p_proto);
 	if (fd == -1) {
 		fprintf (stderr, "Error sock\n");
-		//TODO Error here
 		return -1;
 	}
 	memset (&socketaddr, 0, sizeof (socketaddr));
@@ -267,23 +266,23 @@ int gdbr_connect(libgdbr_t* g, const char* host, int port) {
 
 	if (!hostaddr) {
 		fprintf (stderr, "Error host\n");
-		//TODO Error here
 		return -1;
 	}
 	
 	connected = connect (fd, (struct sockaddr *) &socketaddr, sizeof (socketaddr));
 	if (connected == -1) {
 		fprintf (stderr, "Error conn\n");
-		//TODO Error here
 		return -1;
 	}
 	g->fd = fd;
 	g->connected = 1;
 	// TODO add config possibility here
 	char* message = "qSupported:multiprocess+;qRelocInsn+";
-	send_command (g, message);
-	read_packet (g);
-	return handle_connect (g);
+	ret = send_command(g, message);
+	if (ret < 0)
+		return ret;
+	read_packet(g);
+	return handle_connect(g);
 }
 
 int gdbr_disconnect(libgdbr_t* g) {
@@ -306,7 +305,8 @@ int gdbr_read_memory(libgdbr_t* g, uint64_t address, uint64_t len) {
 	char command[255] = {};
 	int ret = snprintf (command, 255, "%s%016lx,%ld", CMD_READMEM, address, len);
 	if (ret < 0) return ret;
-	send_command (g, command);
+	ret = send_command(g, command);
+	if (ret < 0) return ret;
 
 	if (read_packet (g) > 0) { 
 		parse_packet (g, 0);
@@ -315,14 +315,18 @@ int gdbr_read_memory(libgdbr_t* g, uint64_t address, uint64_t len) {
 	return -1;
 }
 
-int gdbr_write_memory(libgdbr_t* g, uint64_t address, char* data, uint64_t len) {
+int gdbr_write_memory(libgdbr_t* g, uint64_t address, const uint8_t* data, uint64_t len) {
+	int ret = 0;
 	char command[255] = {};
 	int command_len = snprintf (command, 255, "%s%016lx,%ld:", CMD_WRITEMEM, address, len);
-	char* tmp = calloc (command_len + (len * 2), sizeof (char));
+	char* tmp = calloc (command_len + (len * 2), sizeof (uint8_t));
+	if (!tmp) return -1;
 	memcpy (tmp, command, command_len);
-	pack_hex (data, len, (tmp + command_len));
-	send_command (g, tmp);
+	pack_hex ((char*)data, len, (tmp + command_len));
+	ret = send_command (g, tmp);
 	free (tmp);
+	if (ret < 0)
+		return ret;
 
 	if (read_packet (g) > 0) {
 		parse_packet (g, 0);
@@ -343,6 +347,7 @@ int gdbr_continue(libgdbr_t* g, int thread_id) {
 int gdbr_send_command(libgdbr_t* g, char* command) {
 	int ret;
 	char* cmd = calloc ((strlen (command) * 2 + strlen (CMD_QRCMD) + 2), sizeof (char));
+	if (!cmd) return -1;
 	strcpy (cmd, CMD_QRCMD);
 	pack_hex (command, strlen (command), (cmd + strlen (CMD_QRCMD)));
 	ret = send_command (g, cmd);
@@ -356,28 +361,71 @@ int gdbr_send_command(libgdbr_t* g, char* command) {
 	return -1;
 }	
 
-int gdbr_write_bin_registers(libgdbr_t* g, char* registers) {
-	//gdbr_read_registers (g);
-
+int gdbr_write_bin_registers(libgdbr_t* g){
 	uint64_t buffer_size = g->data_len * 2 + 8;
 	char* command = calloc (buffer_size, sizeof (char));
+	if (!command) return -1;
 	snprintf (command, buffer_size, "%s", CMD_WRITEREGS);
 	pack_hex (g->data, g->data_len, command+1);
-	send_command (g, command);
+	if (send_command (g, command) < 0) return -1;
 	read_packet (g);
 	free (command);
 	handle_G (g);
 	return 0;
 }
 
+int gdbr_write_register(libgdbr_t* g, int index, char* value, int len) {
+	char command[255] = {};
+	int ret = snprintf (command, 255, "%s%d=", CMD_WRITEREG, index);
+	memcpy(command + ret, value, len);
+	pack_hex (value, len, (command + ret));
+	if (send_command (g, command) < 0) return -1;
+	if (read_packet (g) > 0) {
+		parse_packet (g, 0);
+		handle_P (g);
+	}
+	return 0;
+}
+
+int gdbr_write_reg(libgdbr_t* g, const char* name, char* value, int len) {
+	// static variable that keeps the information if writing
+	// register through packet <P> was possible
+	static int P = 1;
+	int i = 0;
+	while ( g->registers[i].size > 0) {
+		if (strcmp(g->registers[i].name, name) == 0) {
+			break;
+		}
+		i++;
+	}
+	if (g->registers[i].size == 0) {
+		fprintf(stderr, "Error registername <%s> not found in profile\n", name);
+		return -1;
+	}
+	if (P) {
+		gdbr_write_register (g, i, value, len);
+		if (g->last_code == MSG_OK) {
+			return 0;
+		}
+		P = 0;
+	}
+	gdbr_read_registers (g);
+	memcpy (g->data + g->registers[i].offset, value, len);
+	gdbr_write_bin_registers (g);
+	return 0;
+}
+
 int gdbr_write_registers(libgdbr_t* g, char* registers) {
+	int ret = 0;
 	// read current register set
 	gdbr_read_registers (g);
 
-	int x, len = strlen (registers);
-	char* buff = calloc (len, sizeof (char));
-	memcpy (buff, registers, len);
-	char* reg = strtok (buff, ",");
+	unsigned int x, len = strlen(registers);
+	char* buff = calloc(len, sizeof(char));
+	if (!buff)
+		return -1;
+	memcpy(buff, registers, len);
+	char* reg = strtok(buff, ",");
 	while ( reg != NULL ) {
 		char* name_end = strchr (reg, '=');
 		if (name_end == NULL) {
@@ -395,13 +443,13 @@ int gdbr_write_registers(libgdbr_t* g, char* registers) {
 				uint64_t offset = g->registers[i].offset;
 
 				char* value = calloc (register_size * 2, sizeof (char));
-
+				if (!value) return -1;
 				memset (value, '0', register_size * 2);
 								
 				name_end++; 
 				// be able to take hex with and without 0x
 				if (name_end[1] == 'x' || name_end[1] == 'X') name_end += 2;
-				int val_len = strlen (name_end); // size of the rest
+				const int val_len = strlen (name_end); // size of the rest
 				strcpy (value+(register_size * 2 - val_len), name_end);
 
 				x = 0;
@@ -420,23 +468,30 @@ int gdbr_write_registers(libgdbr_t* g, char* registers) {
 
 	uint64_t buffer_size = g->data_len * 2 + 8;
 	char* command = calloc (buffer_size, sizeof (char));
+	if (!command) return -1;
 	snprintf (command, buffer_size, "%s", CMD_WRITEREGS);
 	pack_hex (g->data, g->data_len, command+1);
-	send_command (g, command);
+	ret = send_command (g, command);
+	if (ret < 0) {
+		free (command);
+		return ret;
+	}
 	read_packet (g);
 	free (command);
 	handle_G (g);
 	return 0;
 }
 
-int test_command(libgdbr_t* g, char* command) {
-	send_command (g, command);
+int test_command(libgdbr_t* g, const char* command) {
+	int ret = send_command (g, command);
+	if (ret < 0)
+		return ret;
 	read_packet (g);
 	hexdump (g->read_buff, g->data_len, 0);
 	return 0;
 }
 
-int send_vcont(libgdbr_t* g, char* command, int thread_id) {
+int send_vcont(libgdbr_t* g, const char* command, int thread_id) {
 	char tmp[255] = {};
 	int ret;
 	if (thread_id < 0) {
@@ -445,7 +500,8 @@ int send_vcont(libgdbr_t* g, char* command, int thread_id) {
 		ret = snprintf (tmp, 255, "%s;%s:%x", CMD_C, command, thread_id);
 	}
 	if (ret < 0) return ret;
-	send_command (g, tmp);
+	ret = send_command (g, tmp);
+	if (ret < 0) return ret;
 	if (read_packet (g) > 0) { 
 		parse_packet (g, 0);
 		return handle_cont (g);
@@ -453,7 +509,7 @@ int send_vcont(libgdbr_t* g, char* command, int thread_id) {
 	return 0;
 }
 
-int set_bp(libgdbr_t* g, uint64_t address, char* conditions, enum Breakpoint type) {
+int set_bp(libgdbr_t* g, uint64_t address, const char* conditions, enum Breakpoint type) {
 	char tmp[255] = {};
 	int ret = 0;
 	switch (type) {
@@ -473,7 +529,8 @@ int set_bp(libgdbr_t* g, uint64_t address, char* conditions, enum Breakpoint typ
 			break;
 	}
 	if (ret < 0) return ret;
-	send_command (g, tmp);
+	ret = send_command (g, tmp);
+	if (ret < 0) return ret;
 
 	if (read_packet (g) > 0) {
 		parse_packet (g, 0);
@@ -482,11 +539,11 @@ int set_bp(libgdbr_t* g, uint64_t address, char* conditions, enum Breakpoint typ
 	return 0;
 }
 
-int gdbr_set_bp(libgdbr_t* g, uint64_t address, char* conditions) {
+int gdbr_set_bp(libgdbr_t* g, uint64_t address, const char* conditions) {
 	return set_bp (g, address, conditions, BREAKPOINT);
 }
 
-int gdbr_set_hwbp(libgdbr_t* g, uint64_t address, char* conditions) {
+int gdbr_set_hwbp(libgdbr_t* g, uint64_t address, const char* conditions) {
 	return set_bp (g, address, conditions, HARDWARE_BREAKPOINT);
 }
 
@@ -518,7 +575,8 @@ int remove_bp(libgdbr_t* g, uint64_t address, enum Breakpoint type) {
 			break;
 	}
 	if (ret < 0) return ret;
-	send_command (g, tmp);
+	ret = send_command (g, tmp);
+	if (ret < 0) return ret;
 
 	if (read_packet (g) > 0) {
 		parse_packet (g, 0);
@@ -534,15 +592,16 @@ int send_ack(libgdbr_t* g) {
 	return 0;
 }
 
-int send_command(libgdbr_t* g, char* command) {
+int send_command(libgdbr_t* g, const char* command) {
 	uint8_t checksum = cmd_checksum (command);
 	int ret = snprintf(g->send_buff, g->send_max,
 		"$%s#%.2x", command, checksum);
 	if (ret >= 0) {
 		g->send_len = ret;
 		ret = send_packet (g);
+		g->send_len = ret;
+		return ret;
 	}
-	g->send_len = ret;
-	return send_packet (g);
+	return -1;
 }
 

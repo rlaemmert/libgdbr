@@ -4,7 +4,7 @@ MAJOR			= 0
 MINOR			= 1
 CFLAGS		= -Wall -g -O0 -ggdb # -std=gnu11
 LD				= gcc
-LDFLAGS		= -L /usr/lib	-L /usr/local/lib
+LDFLAGS		= 
 
 # Test variables
 TEST_D		= $(PWD)/test

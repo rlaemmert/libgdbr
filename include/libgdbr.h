@@ -118,7 +118,8 @@ int test_command(libgdbr_t* g, const char* command);
  * \returns a failure code (currently -1) or 0 if call successfully
  */
 int gdbr_set_bp(libgdbr_t* g, uint64_t address, const char* conditions);
-int gdbr_set_hbp(libgdbr_t* g, uint64_t address, const char* conditions);
-int gdbr_unset_breakpoint(libgdbr_t* g, uint64_t address);
+int gdbr_set_hwbp(libgdbr_t* g, uint64_t address, const char* conditions);
+int gdbr_remove_bp(libgdbr_t* g, uint64_t address); 
+int gdbr_remove_hwbp(libgdbr_t* g, uint64_t address);
 
 #endif
